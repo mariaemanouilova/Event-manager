@@ -74,7 +74,7 @@ async function loadAllUsers() {
 
   if (error) { showToast(error.message, 'error'); return; }
 
-  allUsers = (users || []).filter((u) => u.id !== currentUserId);
+  allUsers = users || [];
   populateUserSelect();
 }
 
