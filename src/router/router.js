@@ -45,13 +45,14 @@ function renderRoute() {
 }
 
 function onLinkClick(event) {
-  const anchor = event.target.closest('a[data-link="true"]');
+  const anchor = event.target.closest('a[data-link="true"], a.router-link');
   if (!anchor) return;
 
-  event.preventDefault();
+  // Only intercept for internal links starting with /
   const href = anchor.getAttribute('href');
-  if (!href) return;
+  if (!href || !href.startsWith('/')) return;
 
+  event.preventDefault();
   window.history.pushState({}, '', href);
   renderRoute();
 }

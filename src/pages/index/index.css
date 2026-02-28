@@ -1,6 +1,23 @@
-.home-page {
-  background: #fff;
-  border: 1px solid #dee2e6;
-  border-radius: 0.5rem;
+.landing-page {
+  animation: fadeIn 0.8s ease-in-out;
+}
+
+.landing-page .feature-icon {
+  width: 4rem;
+  height: 4rem;
+  border-radius: .75rem;
+}
+
+.landing-page .feature {
   padding: 1rem;
+  transition: transform 0.3s ease;
+}
+
+.landing-page .feature:hover {
+  transform: translateY(-5px);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
