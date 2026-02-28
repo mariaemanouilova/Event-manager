@@ -2,6 +2,7 @@ import template from './login.html?raw';
 import './login.css';
 import { supabase } from '../../supabase.js';
 import { navigateTo } from '../../router/router.js';
+import { showToast } from '../../components/toast/toast.js';
 
 export function renderLoginPage(outlet) {
   outlet.innerHTML = template;
@@ -13,19 +14,17 @@ export function renderLoginPage(outlet) {
 /* ── Login ────────────────────────────────────────────────── */
 function setupLoginForm() {
   const form = document.getElementById('login-form');
-  const errorBox = document.getElementById('login-error');
   const spinner = document.getElementById('login-spinner');
   const btn = document.getElementById('login-btn');
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    errorBox.classList.add('d-none');
 
     const email = document.getElementById('login-email').value.trim();
     const password = document.getElementById('login-password').value;
 
     if (!email || !password) {
-      showError(errorBox, 'Please fill in all fields.');
+      showToast('Please fill in all fields.', 'error');
       return;
     }
 
@@ -36,7 +35,7 @@ function setupLoginForm() {
     setLoading(btn, spinner, false);
 
     if (error) {
-      showError(errorBox, error.message);
+      showToast(error.message, 'error');
       return;
     }
 
@@ -48,15 +47,11 @@ function setupLoginForm() {
 /* ── Register ─────────────────────────────────────────────── */
 function setupRegisterForm() {
   const form = document.getElementById('register-form');
-  const errorBox = document.getElementById('register-error');
-  const successBox = document.getElementById('register-success');
   const spinner = document.getElementById('register-spinner');
   const btn = document.getElementById('register-btn');
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    errorBox.classList.add('d-none');
-    successBox.classList.add('d-none');
 
     const fullName = document.getElementById('register-name').value.trim();
     const email = document.getElementById('register-email').value.trim();
@@ -64,15 +59,15 @@ function setupRegisterForm() {
     const confirm = document.getElementById('register-confirm').value;
 
     if (!fullName || !email || !password || !confirm) {
-      showError(errorBox, 'Please fill in all fields.');
+      showToast('Please fill in all fields.', 'error');
       return;
     }
     if (password.length < 6) {
-      showError(errorBox, 'Password must be at least 6 characters.');
+      showToast('Password must be at least 6 characters.', 'error');
       return;
     }
     if (password !== confirm) {
-      showError(errorBox, 'Passwords do not match.');
+      showToast('Passwords do not match.', 'error');
       return;
     }
 
@@ -87,28 +82,24 @@ function setupRegisterForm() {
     setLoading(btn, spinner, false);
 
     if (error) {
-      showError(errorBox, error.message);
+      showToast(error.message, 'error');
       return;
     }
 
     // If email confirmation is required, Supabase returns a user but session may be null
     if (data?.user && !data.session) {
-      successBox.textContent = 'Account created! Please check your email to confirm, then sign in.';
-      successBox.classList.remove('d-none');
+      showToast('Account created! Please check your email to confirm, then sign in.', 'success');
       form.reset();
       return;
     }
 
     // Auto-confirmed → go straight to calendar
+    showToast('Account created successfully!', 'success');
     navigateTo('/calendar');
   });
 }
 
 /* ── Helpers ──────────────────────────────────────────────── */
-function showError(box, message) {
-  box.textContent = message;
-  box.classList.remove('d-none');
-}
 
 function setLoading(btn, spinner, isLoading) {
   btn.disabled = isLoading;

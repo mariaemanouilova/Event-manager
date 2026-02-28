@@ -1,12 +1,14 @@
 import { createHeader } from '../components/header/header.js';
 import { createFooter } from '../components/footer/footer.js';
-import { renderHomePage } from '../pages/index/index.js';
+import { renderLandingPage } from '../pages/index/index.js';
+import { renderPublicHomePage } from '../pages/home/home.js';
 import { renderCalendarPage } from '../pages/calendar/calendar.js';
 import { renderLoginPage } from '../pages/login/login.js';
 import { supabase } from '../supabase.js';
 
 const routes = {
-  '/': renderHomePage,
+  '/': renderLandingPage,
+  '/home': renderPublicHomePage,
   '/calendar': renderCalendarPage,
   '/login': renderLoginPage,
 };

@@ -1,0 +1,21 @@
+<section class="home-page">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0"><i class="bi bi-globe me-2"></i>Public Events</h1>
+  </div>
+
+  <!-- Loading spinner -->
+  <div id="home-loading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading…</span>
+    </div>
+  </div>
+
+  <!-- Empty state -->
+  <div id="home-empty" class="text-center py-5 d-none">
+    <i class="bi bi-calendar-x fs-1 text-muted"></i>
+    <p class="text-muted mt-2">No public events found.</p>
+  </div>
+
+  <!-- Events list -->
+  <div id="home-events" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 d-none"></div>
+</section>

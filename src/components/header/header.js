@@ -12,10 +12,15 @@ export function createHeader(session) {
   wrapper.innerHTML = headerTemplate;
   const header = wrapper.firstElementChild;
 
+  const mainNav = header.querySelector('#main-nav');
   const authNav = header.querySelector('#auth-nav');
 
   if (session?.user) {
-    // User is logged in → show email + Logout button
+    // Logged-in navigation
+    mainNav.innerHTML = `
+      <a class="nav-link" href="/calendar" data-link="true"><i class="bi bi-calendar3 me-1"></i>Calendar</a>
+      <a class="nav-link" href="/home" data-link="true"><i class="bi bi-globe me-1"></i>Public Events</a>
+    `;
     const userEmail = session.user.email;
     authNav.innerHTML = `
       <span class="nav-link disabled text-muted d-none d-lg-inline">${userEmail}</span>
@@ -25,7 +30,11 @@ export function createHeader(session) {
       await supabase.auth.signOut();
     });
   } else {
-    // Not logged in → show Login link
+    // Guest navigation
+    mainNav.innerHTML = `
+      <a class="nav-link" href="/" data-link="true"><i class="bi bi-house me-1"></i>Home</a>
+      <a class="nav-link" href="/home" data-link="true"><i class="bi bi-globe me-1"></i>Public Events</a>
+    `;
     authNav.innerHTML = `
       <a class="btn btn-primary btn-sm" href="/login" data-link="true">Login</a>
     `;
