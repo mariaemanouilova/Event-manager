@@ -7,6 +7,7 @@ import { renderLoginPage } from '../pages/login/login.js';
 import { renderEventsPage } from '../pages/events/events.js';
 import { renderAddEventPage, renderEditEventPage } from '../pages/event-form/event-form.js';
 import { renderInvitationsPage } from '../pages/invitations/invitations.js';
+import { renderAdminPage } from '../pages/admin/admin.js';
 import { supabase } from '../supabase.js';
 
 /* ── Static routes ──────────────────────────────────────── */
@@ -18,6 +19,7 @@ const routes = {
   '/event': renderEventsPage,
   '/event/add': renderAddEventPage,
   '/invitations': renderInvitationsPage,
+  '/admin': renderAdminPage,
 };
 
 /* ── Dynamic route patterns ───────────────────────────────── */

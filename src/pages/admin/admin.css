@@ -1,0 +1,69 @@
+/* ── Admin Panel styles ────────────────────────────────────── */
+.admin-page {
+  background: #fff;
+  border: 1px solid #dee2e6;
+  border-radius: 0.5rem;
+  padding: 1.25rem;
+}
+
+/* Tabs */
+#admin-tabs .nav-link {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #495057;
+}
+#admin-tabs .nav-link.active {
+  color: #0d6efd;
+  border-bottom: 2px solid #0d6efd;
+}
+
+/* Table */
+.admin-page .table th {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+.admin-page .table td {
+  font-size: 0.85rem;
+  vertical-align: middle;
+}
+
+/* Action buttons */
+.admin-action-btn {
+  padding: 0.2rem 0.45rem;
+  font-size: 0.78rem;
+}
+
+/* Truncated description cells */
+.admin-page .desc-cell {
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Edit form fields */
+#admin-edit-body .form-label {
+  font-weight: 500;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: #6c757d;
+}
+
+/* View detail */
+#admin-view-body dt {
+  font-size: 0.8rem;
+  color: #6c757d;
+}
+#admin-view-body dd {
+  font-size: 0.9rem;
+  margin-bottom: 0.75rem;
+}
+
+/* Admin badge */
+#admin-badge {
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+}

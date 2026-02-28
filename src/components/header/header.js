@@ -25,6 +25,23 @@ export function createHeader(session) {
       <a class="nav-link" href="/invitations" data-link="true"><i class="bi bi-envelope-open me-1"></i>Invitations</a>
       <a class="nav-link" href="/home" data-link="true"><i class="bi bi-globe me-1"></i>Public Events</a>
     `;
+
+    // Show Admin link only for admin users
+    supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', session.user.id)
+      .single()
+      .then(({ data }) => {
+        if (data?.role === 'admin') {
+          const adminLink = document.createElement('a');
+          adminLink.className = 'nav-link text-danger fw-semibold';
+          adminLink.href = '/admin';
+          adminLink.dataset.link = 'true';
+          adminLink.innerHTML = '<i class="bi bi-shield-lock me-1"></i>Admin';
+          mainNav.appendChild(adminLink);
+        }
+      });
     const userEmail = session.user.email;
 
     // Build notification bell + auth controls
