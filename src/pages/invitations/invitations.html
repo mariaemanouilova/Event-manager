@@ -1,0 +1,62 @@
+<section class="invitations-page">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0"><i class="bi bi-envelope-open me-2"></i>My Invitations</h1>
+    <span class="badge bg-secondary" id="inv-count">0 invitations</span>
+  </div>
+
+  <!-- Sort control -->
+  <div class="mb-3">
+    <button class="btn btn-outline-secondary btn-sm" id="sort-date-btn">
+      <i class="bi bi-sort-down" id="sort-icon"></i> Date
+    </button>
+  </div>
+
+  <!-- Loading -->
+  <div id="inv-loading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading…</span>
+    </div>
+  </div>
+
+  <!-- Empty state -->
+  <div id="inv-empty" class="text-center py-5 d-none">
+    <i class="bi bi-envelope-x fs-1 text-muted"></i>
+    <p class="text-muted mt-2">You have no invitations yet.</p>
+  </div>
+
+  <!-- Table -->
+  <div class="table-responsive d-none" id="inv-table-wrapper">
+    <table class="table table-hover align-middle mb-0">
+      <thead class="table-light">
+        <tr>
+          <th>Title</th>
+          <th>Description</th>
+          <th>Date</th>
+          <th>Creator</th>
+          <th>Calendar</th>
+          <th>Status</th>
+          <th class="text-end">Actions</th>
+        </tr>
+      </thead>
+      <tbody id="inv-tbody"></tbody>
+    </table>
+  </div>
+
+  <!-- Event detail modal -->
+  <div class="modal fade" id="eventDetailModal" tabindex="-1" aria-labelledby="eventDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="eventDetailModalLabel">Event Details</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="event-detail-body">
+          <!-- populated by JS -->
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

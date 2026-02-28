@@ -6,9 +6,10 @@ import { renderCalendarPage } from '../pages/calendar/calendar.js';
 import { renderLoginPage } from '../pages/login/login.js';
 import { renderEventsPage } from '../pages/events/events.js';
 import { renderAddEventPage, renderEditEventPage } from '../pages/event-form/event-form.js';
+import { renderInvitationsPage } from '../pages/invitations/invitations.js';
 import { supabase } from '../supabase.js';
 
-/* ── Static routes ────────────────────────────────────────── */
+/* ── Static routes ──────────────────────────────────────── */
 const routes = {
   '/': renderLandingPage,
   '/home': renderPublicHomePage,
@@ -16,6 +17,7 @@ const routes = {
   '/login': renderLoginPage,
   '/event': renderEventsPage,
   '/event/add': renderAddEventPage,
+  '/invitations': renderInvitationsPage,
 };
 
 /* ── Dynamic route patterns ───────────────────────────────── */

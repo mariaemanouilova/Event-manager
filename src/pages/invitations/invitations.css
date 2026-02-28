@@ -1,0 +1,30 @@
+.invitations-page .table th {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+.invitations-page .table td {
+  font-size: 0.88rem;
+  vertical-align: middle;
+}
+
+.invitations-page .desc-cell {
+  max-width: 180px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.invitations-page .status-select {
+  min-width: 120px;
+}
+
+#event-detail-body dt {
+  font-weight: 600;
+}
+
+#event-detail-body dd {
+  margin-bottom: 0.75rem;
+}
