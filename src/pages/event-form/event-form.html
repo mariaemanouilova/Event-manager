@@ -1,0 +1,81 @@
+<section class="event-form-page">
+  <div class="d-flex align-items-center mb-3">
+    <a href="/event" data-link="true" class="btn btn-outline-secondary btn-sm me-3">
+      <i class="bi bi-arrow-left"></i>
+    </a>
+    <h1 class="h3 mb-0" id="form-page-title">New Event</h1>
+  </div>
+
+  <div class="card border-0 shadow-sm">
+    <div class="card-body">
+      <form id="event-form" novalidate>
+        <div class="row g-3">
+          <!-- Title -->
+          <div class="col-md-6">
+            <label for="evt-title" class="form-label">Title <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="evt-title" required placeholder="Event title" />
+          </div>
+
+          <!-- Calendar -->
+          <div class="col-md-6">
+            <label for="evt-calendar" class="form-label">Calendar <span class="text-danger">*</span></label>
+            <select class="form-select" id="evt-calendar" required>
+              <option value="">Select calendar…</option>
+            </select>
+          </div>
+
+          <!-- Date -->
+          <div class="col-md-6">
+            <label for="evt-date" class="form-label">Date &amp; Time <span class="text-danger">*</span></label>
+            <input type="datetime-local" class="form-control" id="evt-date" required />
+          </div>
+
+          <!-- Location -->
+          <div class="col-md-6">
+            <label for="evt-location" class="form-label">Location</label>
+            <input type="text" class="form-control" id="evt-location" placeholder="Optional" />
+          </div>
+
+          <!-- Public / Private -->
+          <div class="col-md-6">
+            <label class="form-label d-block">Visibility</label>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="evt-visibility" id="evt-private" value="false" checked />
+              <label class="form-check-label" for="evt-private">Private</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="evt-visibility" id="evt-public" value="true" />
+              <label class="form-check-label" for="evt-public">Public</label>
+            </div>
+          </div>
+
+          <!-- Participants -->
+          <div class="col-md-6">
+            <label for="evt-participant-select" class="form-label">Add Participants</label>
+            <select class="form-select" id="evt-participant-select" multiple size="5">
+            </select>
+            <button type="button" class="btn btn-outline-primary btn-sm mt-2" id="add-participant-btn">
+              <i class="bi bi-plus"></i> Add Selected
+            </button>
+            <div id="participant-list" class="mt-2 d-flex flex-wrap gap-1"></div>
+          </div>
+
+          <!-- Description -->
+          <div class="col-12">
+            <label for="evt-description" class="form-label">Description</label>
+            <textarea class="form-control" id="evt-description" rows="3" placeholder="Event details…"></textarea>
+          </div>
+        </div>
+
+        <hr />
+        <div class="d-flex justify-content-end gap-2">
+          <a href="/event" data-link="true" class="btn btn-outline-secondary">Cancel</a>
+          <button type="submit" class="btn btn-primary" id="evt-submit-btn">
+            <span class="spinner-border spinner-border-sm d-none me-1" id="evt-spinner"></span>
+            <span id="evt-submit-label">Create Event</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>

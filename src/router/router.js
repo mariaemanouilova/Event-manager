@@ -4,14 +4,27 @@ import { renderLandingPage } from '../pages/index/index.js';
 import { renderPublicHomePage } from '../pages/home/home.js';
 import { renderCalendarPage } from '../pages/calendar/calendar.js';
 import { renderLoginPage } from '../pages/login/login.js';
+import { renderEventsPage } from '../pages/events/events.js';
+import { renderAddEventPage, renderEditEventPage } from '../pages/event-form/event-form.js';
 import { supabase } from '../supabase.js';
 
+/* ── Static routes ────────────────────────────────────────── */
 const routes = {
   '/': renderLandingPage,
   '/home': renderPublicHomePage,
   '/calendar': renderCalendarPage,
   '/login': renderLoginPage,
+  '/event': renderEventsPage,
+  '/event/add': renderAddEventPage,
 };
+
+/* ── Dynamic route patterns ───────────────────────────────── */
+const dynamicRoutes = [
+  {
+    pattern: /^\/event\/([0-9a-f-]+)\/edit$/,
+    handler: (outlet, match) => renderEditEventPage(outlet, match[1]),
+  },
+];
 
 function normalizePath(pathname) {
   if (!pathname) return '/';
@@ -48,8 +61,24 @@ async function renderRoute() {
 
   const outlet = mountLayout(root, session);
   const path = normalizePath(window.location.pathname);
-  const pageRenderer = routes[path] ?? routes['/'];
-  pageRenderer(outlet);
+
+  // 1. Try static routes
+  if (routes[path]) {
+    routes[path](outlet);
+    return;
+  }
+
+  // 2. Try dynamic routes
+  for (const { pattern, handler } of dynamicRoutes) {
+    const match = path.match(pattern);
+    if (match) {
+      handler(outlet, match);
+      return;
+    }
+  }
+
+  // 3. Fallback
+  routes['/'](outlet);
 }
 
 function onLinkClick(event) {

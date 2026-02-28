@@ -6,6 +6,7 @@
  *   showToast('Something went wrong', 'error');
  *   showToast('Event updated', 'info');
  */
+import { Toast } from 'bootstrap';
 import './toast.css';
 
 const ICONS = {
@@ -66,7 +67,7 @@ export function showToast(message, type = 'info', duration = 4000) {
   container.appendChild(toastEl);
 
   // Use Bootstrap's Toast API
-  const bsToast = new bootstrap.Toast(toastEl, { delay: duration });
+  const bsToast = new Toast(toastEl, { delay: duration });
   bsToast.show();
 
   // Clean up DOM after hidden

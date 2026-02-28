@@ -1,0 +1,27 @@
+.event-form-page .card {
+  max-width: 800px;
+}
+
+.event-form-page .participant-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 1rem;
+  font-size: 0.8rem;
+  background: #e9ecef;
+}
+
+.event-form-page .participant-chip .btn-remove {
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  font-size: 0.85rem;
+  line-height: 1;
+  color: #6c757d;
+}
+
+.event-form-page .participant-chip .btn-remove:hover {
+  color: #dc3545;
+}

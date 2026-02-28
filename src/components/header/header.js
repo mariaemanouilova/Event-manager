@@ -19,6 +19,7 @@ export function createHeader(session) {
     // Logged-in navigation
     mainNav.innerHTML = `
       <a class="nav-link" href="/calendar" data-link="true"><i class="bi bi-calendar3 me-1"></i>Calendar</a>
+      <a class="nav-link" href="/event" data-link="true"><i class="bi bi-list-ul me-1"></i>My Events</a>
       <a class="nav-link" href="/home" data-link="true"><i class="bi bi-globe me-1"></i>Public Events</a>
     `;
     const userEmail = session.user.email;
