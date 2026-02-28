@@ -1,0 +1,11 @@
+.login-page {
+  min-height: 60vh;
+}
+
+.login-page .card {
+  border-radius: 0.75rem;
+}
+
+.login-page .nav-tabs .nav-link {
+  font-weight: 500;
+}

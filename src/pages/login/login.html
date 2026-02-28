@@ -1,0 +1,64 @@
+<section class="login-page d-flex align-items-center justify-content-center py-5">
+  <div class="card shadow-sm border-0" style="max-width: 440px; width: 100%;">
+    <div class="card-body p-4">
+      <!-- Tabs for Login / Register -->
+      <ul class="nav nav-tabs mb-4" id="authTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="login-tab" data-bs-toggle="tab" data-bs-target="#login-panel" type="button" role="tab" aria-controls="login-panel" aria-selected="true">Login</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="register-tab" data-bs-toggle="tab" data-bs-target="#register-panel" type="button" role="tab" aria-controls="register-panel" aria-selected="false">Register</button>
+        </li>
+      </ul>
+
+      <div class="tab-content" id="authTabContent">
+        <!-- Login Panel -->
+        <div class="tab-pane fade show active" id="login-panel" role="tabpanel" aria-labelledby="login-tab">
+          <form id="login-form" novalidate>
+            <div class="mb-3">
+              <label for="login-email" class="form-label">Email address</label>
+              <input type="email" class="form-control" id="login-email" placeholder="you@example.com" required />
+            </div>
+            <div class="mb-3">
+              <label for="login-password" class="form-label">Password</label>
+              <input type="password" class="form-control" id="login-password" placeholder="Your password" required minlength="6" />
+            </div>
+            <div id="login-error" class="alert alert-danger d-none" role="alert"></div>
+            <button type="submit" class="btn btn-primary w-100" id="login-btn">
+              <span class="spinner-border spinner-border-sm d-none me-1" id="login-spinner" role="status" aria-hidden="true"></span>
+              Sign In
+            </button>
+          </form>
+        </div>
+
+        <!-- Register Panel -->
+        <div class="tab-pane fade" id="register-panel" role="tabpanel" aria-labelledby="register-tab">
+          <form id="register-form" novalidate>
+            <div class="mb-3">
+              <label for="register-name" class="form-label">Full Name</label>
+              <input type="text" class="form-control" id="register-name" placeholder="Jane Doe" required />
+            </div>
+            <div class="mb-3">
+              <label for="register-email" class="form-label">Email address</label>
+              <input type="email" class="form-control" id="register-email" placeholder="you@example.com" required />
+            </div>
+            <div class="mb-3">
+              <label for="register-password" class="form-label">Password</label>
+              <input type="password" class="form-control" id="register-password" placeholder="Min 6 characters" required minlength="6" />
+            </div>
+            <div class="mb-3">
+              <label for="register-confirm" class="form-label">Confirm Password</label>
+              <input type="password" class="form-control" id="register-confirm" placeholder="Repeat password" required minlength="6" />
+            </div>
+            <div id="register-error" class="alert alert-danger d-none" role="alert"></div>
+            <div id="register-success" class="alert alert-success d-none" role="alert"></div>
+            <button type="submit" class="btn btn-primary w-100" id="register-btn">
+              <span class="spinner-border spinner-border-sm d-none me-1" id="register-spinner" role="status" aria-hidden="true"></span>
+              Create Account
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

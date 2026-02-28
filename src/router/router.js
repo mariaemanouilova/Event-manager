@@ -2,10 +2,13 @@ import { createHeader } from '../components/header/header.js';
 import { createFooter } from '../components/footer/footer.js';
 import { renderHomePage } from '../pages/index/index.js';
 import { renderCalendarPage } from '../pages/calendar/calendar.js';
+import { renderLoginPage } from '../pages/login/login.js';
+import { supabase } from '../supabase.js';
 
 const routes = {
   '/': renderHomePage,
-  '/calender': renderCalendarPage,
+  '/calendar': renderCalendarPage,
+  '/login': renderLoginPage,
 };
 
 function normalizePath(pathname) {
@@ -15,13 +18,13 @@ function normalizePath(pathname) {
     : pathname;
 }
 
-function mountLayout(rootElement) {
+function mountLayout(rootElement, session) {
   rootElement.innerHTML = '';
 
   const shell = document.createElement('div');
   shell.className = 'app-shell';
 
-  const header = createHeader();
+  const header = createHeader(session);
   const main = document.createElement('main');
   main.className = 'app-main container';
   const footer = createFooter();
@@ -34,11 +37,14 @@ function mountLayout(rootElement) {
   return main;
 }
 
-function renderRoute() {
+async function renderRoute() {
   const root = document.querySelector('#app');
   if (!root) return;
 
-  const outlet = mountLayout(root);
+  // Get current session
+  const { data: { session } } = await supabase.auth.getSession();
+
+  const outlet = mountLayout(root, session);
   const path = normalizePath(window.location.pathname);
   const pageRenderer = routes[path] ?? routes['/'];
   pageRenderer(outlet);
@@ -57,8 +63,23 @@ function onLinkClick(event) {
   renderRoute();
 }
 
+export function navigateTo(path) {
+  window.history.pushState({}, '', path);
+  renderRoute();
+}
+
 export function renderApp() {
   window.addEventListener('popstate', renderRoute);
   document.addEventListener('click', onLinkClick);
+
+  // Listen for auth state changes (login/logout)
+  supabase.auth.onAuthStateChange((event) => {
+    if (event === 'SIGNED_IN') {
+      navigateTo('/calendar');
+    } else if (event === 'SIGNED_OUT') {
+      navigateTo('/');
+    }
+  });
+
   renderRoute();
 }
