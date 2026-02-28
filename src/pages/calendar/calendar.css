@@ -84,3 +84,16 @@
   border-radius: 50%;
   display: inline-block;
 }
+
+/* Create Calendar button */
+#create-calendar-btn {
+  white-space: nowrap;
+}
+
+/* Create Calendar modal form */
+#create-calendar-form .form-check-label {
+  cursor: pointer;
+}
+#create-calendar-form .form-control:disabled {
+  background-color: #f8f9fa;
+}

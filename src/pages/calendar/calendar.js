@@ -1,3 +1,4 @@
+import { Modal } from 'bootstrap';
 import template from './calendar.html?raw';
 import './calendar.css';
 import { Calendar } from '@fullcalendar/core';
@@ -15,20 +16,43 @@ const PALETTE = [
 let calendarInstance = null;
 let allEvents = [];
 let calendarMeta = []; // { id, title, color, active }
+let currentSession = null;
+let createCalModal = null;
 
 export async function renderCalendarPage(outlet) {
   outlet.innerHTML = template;
 
   const { data: { session } } = await supabase.auth.getSession();
+  currentSession = session;
 
   await loadEvents(session);
   buildFilterChips();
   mountFullCalendar();
+  wireCreateCalendarModal(session);
 }
 
 /* ── Data loading ─────────────────────────────────────────── */
 async function loadEvents(session) {
-  // Fetch public events
+  // 1. Load all calendars the user can see (own + public) independently
+  const { data: calendars, error: calErr } = await supabase
+    .from('calendars')
+    .select('id, title, is_public')
+    .order('title');
+
+  if (calErr) {
+    showToast(calErr.message, 'error');
+  }
+
+  // Build calendar meta from the full calendars list (not just from events)
+  calendarMeta = (calendars || []).map((c, i) => ({
+    id: c.id,
+    title: c.title,
+    is_public: c.is_public,
+    color: PALETTE[i % PALETTE.length],
+    active: true,
+  }));
+
+  // 2. Fetch events
   let query = supabase
     .from('events')
     .select('id, title, description, event_date, location, is_public, calendar_id, creator_id, calendars(id, title, is_public)')
@@ -40,21 +64,6 @@ async function loadEvents(session) {
     showToast(error.message, 'error');
     return;
   }
-
-  // Build unique calendar list and assign colors
-  const calMap = new Map();
-  (events || []).forEach((evt) => {
-    const cal = evt.calendars;
-    if (cal && !calMap.has(cal.id)) {
-      calMap.set(cal.id, { id: cal.id, title: cal.title, is_public: cal.is_public });
-    }
-  });
-
-  calendarMeta = Array.from(calMap.values()).map((c, i) => ({
-    ...c,
-    color: PALETTE[i % PALETTE.length],
-    active: true,
-  }));
 
   // Map events to FullCalendar format
   allEvents = (events || []).map((evt) => {
@@ -153,4 +162,85 @@ function escapeHtml(str) {
   const div = document.createElement('div');
   div.textContent = str || '';
   return div.innerHTML;
+}
+
+/* ══════════════════════════════════════════════════════════
+   Create Calendar modal
+   ══════════════════════════════════════════════════════════ */
+function wireCreateCalendarModal(session) {
+  const modalEl = document.getElementById('createCalendarModal');
+  if (!modalEl) return;
+
+  createCalModal = new Modal(modalEl);
+
+  const btn = document.getElementById('create-calendar-btn');
+  btn.addEventListener('click', () => {
+    // Pre-fill readonly fields
+    const creatorField = document.getElementById('cal-creator');
+    creatorField.value = session?.user?.email || 'Unknown';
+
+    const dateField = document.getElementById('cal-created-date');
+    dateField.value = new Date().toLocaleDateString('en-US', {
+      year: 'numeric', month: 'long', day: 'numeric',
+    });
+
+    // Reset editable fields
+    document.getElementById('cal-title').value = '';
+    document.getElementById('cal-private').checked = true;
+
+    createCalModal.show();
+  });
+
+  // Form submit
+  const form = document.getElementById('create-calendar-form');
+  const spinner = document.getElementById('cal-spinner');
+  const submitBtn = document.getElementById('cal-submit-btn');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const title = document.getElementById('cal-title').value.trim();
+    if (!title) {
+      showToast('Calendar title is required.', 'error');
+      return;
+    }
+
+    const isPublic = document.querySelector('input[name="cal-privacy"]:checked').value === 'true';
+
+    submitBtn.disabled = true;
+    spinner.classList.remove('d-none');
+
+    try {
+      const { error } = await supabase
+        .from('calendars')
+        .insert({
+          title,
+          is_public: isPublic,
+          creator_id: session.user.id,
+        });
+
+      if (error) throw error;
+
+      showToast(`Calendar "${title}" created!`, 'success');
+      createCalModal.hide();
+
+      // Refresh calendar view to show the new calendar in filters
+      await refreshCalendarView();
+    } catch (err) {
+      showToast(err.message, 'error');
+    } finally {
+      submitBtn.disabled = false;
+      spinner.classList.add('d-none');
+    }
+  });
+}
+
+/* ── Refresh entire calendar + filters after creating a calendar ─ */
+async function refreshCalendarView() {
+  await loadEvents(currentSession);
+  buildFilterChips();
+  if (calendarInstance) {
+    calendarInstance.removeAllEvents();
+    getVisibleEvents().forEach((e) => calendarInstance.addEvent(e));
+  }
 }

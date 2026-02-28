@@ -1,6 +1,9 @@
 <section class="calendar-page">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h1 class="h3 mb-0"><i class="bi bi-calendar3 me-2"></i>My Calendar</h1>
+    <button class="btn btn-primary btn-sm" id="create-calendar-btn" type="button">
+      <i class="bi bi-plus-lg me-1"></i>Create Calendar
+    </button>
   </div>
 
   <!-- Calendar filter -->
@@ -12,3 +15,64 @@
   <!-- FullCalendar mount point -->
   <div id="fullcalendar"></div>
 </section>
+
+<!-- Create Calendar Modal -->
+<div class="modal fade" id="createCalendarModal" tabindex="-1" aria-labelledby="createCalendarModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="createCalendarModalLabel">
+          <i class="bi bi-calendar-plus me-2"></i>Create Calendar
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form id="create-calendar-form" novalidate>
+        <div class="modal-body">
+          <!-- Title -->
+          <div class="mb-3">
+            <label for="cal-title" class="form-label">Title <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="cal-title" placeholder="e.g. Work, Personal, Team…" required>
+          </div>
+
+          <!-- Creator (read-only) -->
+          <div class="mb-3">
+            <label for="cal-creator" class="form-label">Creator</label>
+            <input type="text" class="form-control" id="cal-creator" readonly disabled>
+          </div>
+
+          <!-- Privacy -->
+          <div class="mb-3">
+            <label class="form-label">Privacy</label>
+            <div class="d-flex gap-3">
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="cal-privacy" id="cal-private" value="false" checked>
+                <label class="form-check-label" for="cal-private">
+                  <i class="bi bi-lock me-1"></i>Private
+                </label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="cal-privacy" id="cal-public" value="true">
+                <label class="form-check-label" for="cal-public">
+                  <i class="bi bi-globe me-1"></i>Public
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Created Date (read-only) -->
+          <div class="mb-3">
+            <label for="cal-created-date" class="form-label">Created Date</label>
+            <input type="text" class="form-control" id="cal-created-date" readonly disabled>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="cal-submit-btn">
+            <span class="spinner-border spinner-border-sm d-none me-1" id="cal-spinner" role="status"></span>
+            Create Calendar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
