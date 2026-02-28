@@ -1,0 +1,130 @@
+/* ── Notification bell dropdown ─────────────────────────── */
+.notification-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.notification-bell {
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+  position: relative;
+  color: #495057;
+  transition: color 0.2s;
+}
+.notification-bell:hover {
+  color: #0d6efd;
+}
+
+.notification-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 9px;
+  background: #dc3545;
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  pointer-events: none;
+  transform: translate(30%, -30%);
+}
+.notification-badge.d-none { display: none !important; }
+
+/* Dropdown panel */
+.notification-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  width: 360px;
+  max-height: 420px;
+  overflow-y: auto;
+  background: #fff;
+  border: 1px solid #dee2e6;
+  border-radius: 0.5rem;
+  box-shadow: 0 0.5rem 1.5rem rgba(0,0,0,0.15);
+  z-index: 1080;
+  display: none;
+}
+.notification-dropdown.show { display: block; }
+
+.notification-dropdown-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #dee2e6;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+.notification-dropdown-header button {
+  background: none;
+  border: none;
+  font-size: 0.75rem;
+  color: #0d6efd;
+  cursor: pointer;
+  padding: 0;
+}
+.notification-dropdown-header button:hover { text-decoration: underline; }
+
+.notification-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.notification-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.notification-item:hover { background: #f8f9fa; }
+.notification-item.unread { background: #e8f0fe; }
+.notification-item.unread:hover { background: #d6e4fc; }
+
+.notification-icon {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 1rem;
+}
+.notification-icon.invitation { background: #cfe2ff; color: #0d6efd; }
+.notification-icon.rsvp_update { background: #d1e7dd; color: #198754; }
+.notification-icon.info { background: #e2e3e5; color: #495057; }
+
+.notification-body {
+  flex: 1;
+  min-width: 0;
+}
+.notification-message {
+  font-size: 0.8125rem;
+  line-height: 1.3;
+  margin-bottom: 0.15rem;
+  color: #212529;
+}
+.notification-time {
+  font-size: 0.7rem;
+  color: #868e96;
+}
+
+.notification-empty {
+  padding: 2rem 1rem;
+  text-align: center;
+  color: #868e96;
+  font-size: 0.875rem;
+}

@@ -4,6 +4,7 @@ import './invitations.css';
 import { supabase } from '../../supabase.js';
 import { showToast } from '../../components/toast/toast.js';
 import { navigateTo } from '../../router/router.js';
+import { insertNotification } from '../../components/notifications/notifications.js';
 
 let invitations = [];
 let sortAsc = true; // true = ascending (oldest first), false = descending
@@ -150,6 +151,31 @@ function renderTable() {
       if (inv) inv.status = newStatus;
 
       showToast(`RSVP updated to "${newStatus}".`, 'success');
+
+      // ── Notify the event creator about the RSVP change ──────
+      if (inv?.events) {
+        const evt = inv.events;
+        const creatorId = evt.creator_id;
+
+        // Only notify if creator is a different user
+        if (creatorId && creatorId !== currentUserId) {
+          // Get current user's display name
+          const { data: me } = await supabase
+            .from('users')
+            .select('full_name, email')
+            .eq('id', currentUserId)
+            .single();
+
+          const myName = me?.full_name || me?.email || 'A participant';
+
+          await insertNotification({
+            userId: creatorId,
+            eventId: evt.id,
+            message: `${myName} changed RSVP to "${newStatus}" for "${evt.title}"`,
+            type: 'rsvp_update',
+          });
+        }
+      }
     });
   });
 

@@ -1,6 +1,8 @@
 import headerTemplate from './header.html?raw';
 import './header.css';
 import { supabase } from '../../supabase.js';
+import { createNotificationBell, startNotificationListener, stopNotificationListener }
+  from '../notifications/notifications.js';
 
 /**
  * Creates the header element and populates auth-related nav items
@@ -24,13 +26,29 @@ export function createHeader(session) {
       <a class="nav-link" href="/home" data-link="true"><i class="bi bi-globe me-1"></i>Public Events</a>
     `;
     const userEmail = session.user.email;
+
+    // Build notification bell + auth controls
+    const bellEl = createNotificationBell();
+
     authNav.innerHTML = `
       <span class="nav-link disabled text-muted d-none d-lg-inline">${userEmail}</span>
-      <button class="btn btn-outline-danger btn-sm ms-2" id="logout-btn">Logout</button>
     `;
-    authNav.querySelector('#logout-btn').addEventListener('click', async () => {
+    // Insert bell before the email / logout area
+    authNav.prepend(bellEl);
+
+    const logoutBtn = document.createElement('button');
+    logoutBtn.className = 'btn btn-outline-danger btn-sm ms-2';
+    logoutBtn.id = 'logout-btn';
+    logoutBtn.textContent = 'Logout';
+    authNav.appendChild(logoutBtn);
+
+    logoutBtn.addEventListener('click', async () => {
+      stopNotificationListener();
       await supabase.auth.signOut();
     });
+
+    // Start realtime notifications for this user
+    startNotificationListener(session.user.id);
   } else {
     // Guest navigation
     mainNav.innerHTML = `

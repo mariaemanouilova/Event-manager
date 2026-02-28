@@ -3,6 +3,7 @@ import './event-form.css';
 import { supabase } from '../../supabase.js';
 import { showToast } from '../../components/toast/toast.js';
 import { navigateTo } from '../../router/router.js';
+import { insertNotification } from '../../components/notifications/notifications.js';
 
 let participantEmails = [];
 let allUsers = [];  // all registered users from DB
@@ -287,6 +288,34 @@ async function syncParticipants(eventId) {
   if (rows.length > 0) {
     const { error: insErr } = await supabase.from('participants').insert(rows);
     if (insErr) showToast('Some participants could not be added.', 'warning');
+  }
+
+  // ── Send invitation notifications to each participant ───────
+  // Fetch event title for the notification message
+  const { data: evt } = await supabase
+    .from('events')
+    .select('title')
+    .eq('id', eventId)
+    .single();
+
+  const eventTitle = evt?.title || 'an event';
+
+  // Get current user's display info
+  const { data: creator } = await supabase
+    .from('users')
+    .select('full_name, email')
+    .eq('id', currentUserId)
+    .single();
+
+  const creatorName = creator?.full_name || creator?.email || 'Someone';
+
+  for (const u of (users || [])) {
+    await insertNotification({
+      userId: u.id,
+      eventId,
+      message: `${creatorName} invited you to "${eventTitle}"`,
+      type: 'invitation',
+    });
   }
 }
 
