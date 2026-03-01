@@ -250,11 +250,20 @@ function getAttachmentPublicUrl(path) {
   return data?.publicUrl || '';
 }
 
+function sanitizeFileName(name) {
+  // Replace non-ASCII characters and special chars with underscores; keep extension
+  const dot = name.lastIndexOf('.');
+  const ext = dot > 0 ? name.slice(dot) : '';
+  const base = dot > 0 ? name.slice(0, dot) : name;
+  const safe = base.replace(/[^a-zA-Z0-9_-]/g, '_').replace(/_{2,}/g, '_').replace(/^_|_$/g, '');
+  return (safe || 'file') + ext.toLowerCase();
+}
+
 async function uploadAttachments(eventId) {
   if (pendingFiles.length === 0) return;
 
   for (const file of pendingFiles) {
-    const filePath = `${eventId}/${Date.now()}_${file.name}`;
+    const filePath = `${eventId}/${Date.now()}_${sanitizeFileName(file.name)}`;
 
     const { error: uploadErr } = await supabase.storage
       .from('event-attachments')
