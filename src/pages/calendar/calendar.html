@@ -16,6 +16,50 @@
   <div id="fullcalendar"></div>
 </section>
 
+<!-- Event Detail Popup (Google Calendar style) -->
+<div class="event-popup-backdrop d-none" id="event-popup-backdrop"></div>
+<div class="event-popup d-none" id="event-popup">
+  <div class="event-popup-header" id="event-popup-header">
+    <span class="event-popup-title" id="event-popup-title"></span>
+    <button type="button" class="btn-close btn-close-white btn-sm" id="event-popup-close" aria-label="Close"></button>
+  </div>
+  <div class="event-popup-body">
+    <div class="event-popup-row"><i class="bi bi-clock me-2 text-muted"></i><span id="event-popup-date"></span></div>
+    <div class="event-popup-row"><i class="bi bi-geo-alt me-2 text-muted"></i><span id="event-popup-location"></span></div>
+    <div class="event-popup-row"><i class="bi bi-calendar3 me-2 text-muted"></i><span id="event-popup-calendar"></span></div>
+    <div class="event-popup-row"><i class="bi bi-eye me-2 text-muted"></i><span id="event-popup-visibility"></span></div>
+    <div class="event-popup-row event-popup-desc" id="event-popup-desc-row">
+      <i class="bi bi-text-left me-2 text-muted"></i><span id="event-popup-desc"></span>
+    </div>
+  </div>
+  <div class="event-popup-footer d-none" id="event-popup-footer">
+    <a class="btn btn-outline-primary btn-sm" id="event-popup-edit"><i class="bi bi-pencil-square me-1"></i>Edit</a>
+    <button class="btn btn-outline-danger btn-sm" id="event-popup-delete"><i class="bi bi-trash me-1"></i>Delete</button>
+  </div>
+</div>
+
+<!-- Delete Event Confirmation Modal -->
+<div class="modal fade" id="calDeleteEventModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title"><i class="bi bi-trash me-2"></i>Delete Event</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete <strong id="cal-delete-event-title"></strong>?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-danger" id="cal-delete-event-btn">
+          <span class="spinner-border spinner-border-sm d-none me-1" id="cal-delete-spinner" role="status"></span>
+          Delete
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Create Calendar Modal -->
 <div class="modal fade" id="createCalendarModal" tabindex="-1" aria-labelledby="createCalendarModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">

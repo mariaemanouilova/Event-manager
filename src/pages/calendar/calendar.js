@@ -6,6 +6,7 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { supabase } from '../../supabase.js';
 import { showToast } from '../../components/toast/toast.js';
+import { navigateTo } from '../../router/router.js';
 
 // Color palette for calendars (Google Calendar-inspired)
 const PALETTE = [
@@ -18,6 +19,9 @@ let allEvents = [];
 let calendarMeta = []; // { id, title, color, active }
 let currentSession = null;
 let createCalModal = null;
+let isAdmin = false;
+let deleteEventModal = null;
+let pendingDeleteEventId = null;
 
 export async function renderCalendarPage(outlet) {
   outlet.innerHTML = template;
@@ -25,10 +29,22 @@ export async function renderCalendarPage(outlet) {
   const { data: { session } } = await supabase.auth.getSession();
   currentSession = session;
 
+  // Check admin role
+  if (session) {
+    const { data: roleRow } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', session.user.id)
+      .single();
+    isAdmin = roleRow?.role === 'admin';
+  }
+
   await loadEvents(session);
   buildFilterChips();
   mountFullCalendar();
   wireCreateCalendarModal(session);
+  wireEventPopup();
+  wireDeleteEventModal();
 }
 
 /* ── Data loading ─────────────────────────────────────────── */
@@ -157,21 +173,8 @@ function mountFullCalendar() {
     eventDisplay: 'block',
     fixedWeekCount: false,
     eventClick(info) {
-      const props = info.event.extendedProps;
-      const date = new Date(info.event.start);
-      const formatted = date.toLocaleString('en-US', {
-        weekday: 'short', year: 'numeric', month: 'short', day: 'numeric',
-        hour: '2-digit', minute: '2-digit',
-      });
-
-      showToast(
-        `<strong>${escapeHtml(info.event.title)}</strong><br>` +
-        `<small>${formatted}</small><br>` +
-        `<small><i class="bi bi-geo-alt"></i> ${escapeHtml(props.location || 'No location')}</small><br>` +
-        `<small><i class="bi bi-calendar3"></i> ${escapeHtml(props.calendarTitle)}</small>`,
-        'info',
-        6000
-      );
+      info.jsEvent.preventDefault();
+      showEventPopup(info.event, info.jsEvent);
     },
   });
 
@@ -264,4 +267,138 @@ async function refreshCalendarView() {
     calendarInstance.removeAllEvents();
     getVisibleEvents().forEach((e) => calendarInstance.addEvent(e));
   }
+}
+
+/* ══════════════════════════════════════════════════════════
+   Event Detail Popup (Google Calendar style)
+   ══════════════════════════════════════════════════════════ */
+function wireEventPopup() {
+  document.getElementById('event-popup-close').addEventListener('click', closeEventPopup);
+  document.getElementById('event-popup-backdrop').addEventListener('click', closeEventPopup);
+}
+
+function showEventPopup(fcEvent, jsEvent) {
+  const props = fcEvent.extendedProps;
+  const popup = document.getElementById('event-popup');
+  const backdrop = document.getElementById('event-popup-backdrop');
+
+  // Find the color from calendarMeta
+  const meta = calendarMeta.find((c) => c.id === props.calendarId);
+  const color = meta?.color || PALETTE[0];
+
+  // Header
+  const header = document.getElementById('event-popup-header');
+  header.style.backgroundColor = color;
+  document.getElementById('event-popup-title').textContent = fcEvent.title;
+
+  // Body fields
+  const date = new Date(fcEvent.start);
+  document.getElementById('event-popup-date').textContent = date.toLocaleString('en-US', {
+    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+    hour: '2-digit', minute: '2-digit',
+  });
+  document.getElementById('event-popup-location').textContent = props.location || 'No location';
+  document.getElementById('event-popup-calendar').textContent = props.calendarTitle;
+  document.getElementById('event-popup-visibility').textContent = props.isPublic ? 'Public' : 'Private';
+
+  const descRow = document.getElementById('event-popup-desc-row');
+  const descEl = document.getElementById('event-popup-desc');
+  if (props.description) {
+    descEl.textContent = props.description;
+    descRow.classList.remove('d-none');
+  } else {
+    descRow.classList.add('d-none');
+  }
+
+  // Footer — show edit/delete only for creator or admin
+  const userId = currentSession?.user?.id;
+  const canEdit = userId === props.creatorId || isAdmin;
+  const footer = document.getElementById('event-popup-footer');
+
+  if (canEdit) {
+    footer.classList.remove('d-none');
+    const editBtn = document.getElementById('event-popup-edit');
+    editBtn.href = `/event/${fcEvent.id}/edit`;
+    editBtn.onclick = (e) => {
+      e.preventDefault();
+      closeEventPopup();
+      navigateTo(`/event/${fcEvent.id}/edit`);
+    };
+
+    const deleteBtn = document.getElementById('event-popup-delete');
+    deleteBtn.onclick = () => {
+      closeEventPopup();
+      pendingDeleteEventId = fcEvent.id;
+      document.getElementById('cal-delete-event-title').textContent = fcEvent.title;
+      deleteEventModal.show();
+    };
+  } else {
+    footer.classList.add('d-none');
+  }
+
+  // Position popup near the clicked event
+  positionPopup(popup, jsEvent);
+  popup.classList.remove('d-none');
+  backdrop.classList.remove('d-none');
+}
+
+function closeEventPopup() {
+  document.getElementById('event-popup').classList.add('d-none');
+  document.getElementById('event-popup-backdrop').classList.add('d-none');
+}
+
+function positionPopup(popup, jsEvent) {
+  const margin = 12;
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+
+  // Temporarily show off-screen to measure
+  popup.style.left = '-9999px';
+  popup.style.top = '-9999px';
+  popup.classList.remove('d-none');
+  const rect = popup.getBoundingClientRect();
+  popup.classList.add('d-none');
+
+  let left = jsEvent.clientX + margin;
+  let top = jsEvent.clientY + margin;
+
+  // Keep within viewport
+  if (left + rect.width > vw - margin) left = vw - rect.width - margin;
+  if (top + rect.height > vh - margin) top = vh - rect.height - margin;
+  if (left < margin) left = margin;
+  if (top < margin) top = margin;
+
+  popup.style.left = `${left}px`;
+  popup.style.top = `${top}px`;
+}
+
+/* ── Delete Event from calendar ───────────────────────────── */
+function wireDeleteEventModal() {
+  const modalEl = document.getElementById('calDeleteEventModal');
+  if (!modalEl) return;
+  deleteEventModal = new Modal(modalEl);
+
+  const btn = document.getElementById('cal-delete-event-btn');
+  const spinner = document.getElementById('cal-delete-spinner');
+
+  btn.addEventListener('click', async () => {
+    if (!pendingDeleteEventId) return;
+    btn.disabled = true;
+    spinner.classList.remove('d-none');
+
+    try {
+      const { error } = await supabase.from('events').delete().eq('id', pendingDeleteEventId);
+      if (error) throw error;
+
+      showToast('Event deleted.', 'success');
+      deleteEventModal.hide();
+      await refreshCalendarView();
+    } catch (err) {
+      showToast(err.message, 'error');
+    } finally {
+      btn.disabled = false;
+      spinner.classList.add('d-none');
+      pendingDeleteEventId = null;
+    }
+  });
 }

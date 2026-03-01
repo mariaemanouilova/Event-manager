@@ -97,3 +97,70 @@
 #create-calendar-form .form-control:disabled {
   background-color: #f8f9fa;
 }
+
+/* ── Event popup (Google Calendar style) ──────────────────── */
+.event-popup-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1040;
+}
+
+.event-popup {
+  position: fixed;
+  z-index: 1050;
+  width: 320px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 8px 28px rgba(0,0,0,.25);
+  overflow: hidden;
+  animation: popup-in .15s ease-out;
+}
+
+@keyframes popup-in {
+  from { opacity: 0; transform: scale(.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.event-popup-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.event-popup-title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+  margin-right: 0.5rem;
+}
+
+.event-popup-body {
+  padding: 0.75rem 1rem;
+}
+
+.event-popup-row {
+  display: flex;
+  align-items: flex-start;
+  font-size: 0.85rem;
+  padding: 0.25rem 0;
+  color: #3c4043;
+}
+
+.event-popup-desc {
+  border-top: 1px solid #e8eaed;
+  margin-top: 0.35rem;
+  padding-top: 0.5rem;
+}
+
+.event-popup-footer {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  padding: 0.5rem 1rem 0.75rem;
+  border-top: 1px solid #e8eaed;
+}
