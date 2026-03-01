@@ -43,10 +43,10 @@ async function loadEvents() {
 
   if (errInvited) { showToast(errInvited.message, 'error'); return; }
 
-  // Merge, avoiding duplicates — exclude public events (they belong in Calendar / Public Events)
+  // Merge, avoiding duplicates — include public events created by the user
   const eventMap = new Map();
   (created || []).forEach((e) => {
-    if (!e.is_public) eventMap.set(e.id, { ...e, _source: 'created' });
+    eventMap.set(e.id, { ...e, _source: 'created' });
   });
   (invitedParts || []).forEach((p) => {
     const e = p.events;
