@@ -43,15 +43,15 @@ async function loadEvents() {
 
   if (errInvited) { showToast(errInvited.message, 'error'); return; }
 
-  // Merge, avoiding duplicates
+  // Merge, avoiding duplicates — exclude public events (they belong in Calendar / Public Events)
   const eventMap = new Map();
-  (created || []).forEach((e) => eventMap.set(e.id, { ...e, _source: 'created' }));
+  (created || []).forEach((e) => {
+    if (!e.is_public) eventMap.set(e.id, { ...e, _source: 'created' });
+  });
   (invitedParts || []).forEach((p) => {
     const e = p.events;
-    if (e && !eventMap.has(e.id)) {
+    if (e && !e.is_public && !eventMap.has(e.id)) {
       eventMap.set(e.id, { ...e, _source: 'invited' });
-    } else if (e && eventMap.has(e.id)) {
-      // already there as "created", keep it
     }
   });
 
@@ -148,10 +148,10 @@ function renderTable() {
         <td>${creatorLabel}</td>
         <td>${calTitle}</td>
         <td class="text-end text-nowrap">
-          <a href="/event/${evt.id}/edit" data-link="true" class="btn btn-outline-primary btn-sm me-1" title="View / Edit">
+          ${isOwner ? `<a href="/event/${evt.id}/edit" data-link="true" class="btn btn-outline-primary btn-sm me-1" title="Edit">
             <i class="bi bi-pencil-square"></i>
           </a>
-          ${isOwner ? `<button class="btn btn-outline-danger btn-sm btn-delete-event" data-id="${evt.id}" data-title="${esc(evt.title)}" title="Delete">
+          <button class="btn btn-outline-danger btn-sm btn-delete-event" data-id="${evt.id}" data-title="${esc(evt.title)}" title="Delete">
             <i class="bi bi-trash"></i>
           </button>` : ''}
         </td>

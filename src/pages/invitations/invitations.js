@@ -47,7 +47,8 @@ async function loadInvitations() {
     return;
   }
 
-  invitations = (data || []).filter((p) => p.events); // only valid rows
+  // Keep only private events — public events don't belong in invitations
+  invitations = (data || []).filter((p) => p.events && !p.events.is_public);
 }
 
 /* ── Sorting ──────────────────────────────────────────────── */
