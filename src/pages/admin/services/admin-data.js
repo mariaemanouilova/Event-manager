@@ -111,3 +111,48 @@ export async function replaceEventParticipants(eventId, userIds) {
 export async function fetchAllUsers() {
   return supabase.from('users').select('id, email, full_name').order('email');
 }
+
+/* ── Attachments ────────────────────────────────────────────── */
+
+export async function fetchAttachmentsByEvent(eventId) {
+  return supabase
+    .from('event_attachments')
+    .select('*')
+    .eq('event_id', eventId)
+    .order('created_at');
+}
+
+export async function fetchAllAttachmentsCounts() {
+  // Return all attachments (id + event_id) so caller can group-count
+  return supabase
+    .from('event_attachments')
+    .select('id, event_id');
+}
+
+export async function deleteAttachment(id, filePath) {
+  // Remove from storage first
+  await supabase.storage.from('event-attachments').remove([filePath]);
+  return supabase.from('event_attachments').delete().eq('id', id);
+}
+
+export async function uploadAttachment(eventId, file, userId) {
+  const filePath = `${eventId}/${Date.now()}_${file.name}`;
+  const { error: uploadErr } = await supabase.storage
+    .from('event-attachments')
+    .upload(filePath, file, { upsert: false });
+  if (uploadErr) return { data: null, error: uploadErr };
+
+  return supabase.from('event_attachments').insert({
+    event_id: eventId,
+    file_name: file.name,
+    file_path: filePath,
+    file_type: file.type || 'application/octet-stream',
+    file_size: file.size,
+    uploaded_by: userId,
+  });
+}
+
+export function getAttachmentPublicUrl(filePath) {
+  const { data: urlData } = supabase.storage.from('event-attachments').getPublicUrl(filePath);
+  return urlData?.publicUrl || '';
+}
