@@ -128,3 +128,21 @@
   color: #868e96;
   font-size: 0.875rem;
 }
+
+/* ── Responsive: mobile ─────────────────────────────────── */
+@media (max-width: 767.98px) {
+  .notification-dropdown {
+    width: calc(100vw - 1.5rem);
+    max-width: 360px;
+    right: -0.5rem;
+  }
+
+  .notification-item {
+    padding: 0.6rem 0.75rem;
+    gap: 0.5rem;
+  }
+
+  .notification-message {
+    font-size: 0.78rem;
+  }
+}

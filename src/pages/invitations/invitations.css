@@ -28,3 +28,28 @@
 #event-detail-body dd {
   margin-bottom: 0.75rem;
 }
+
+/* ── Responsive: mobile ─────────────────────────────────── */
+@media (max-width: 767.98px) {
+  .invitations-page .table-responsive {
+    margin: 0 -0.75rem;
+    padding: 0 0.75rem;
+  }
+
+  .invitations-page .table th {
+    font-size: 0.7rem;
+  }
+
+  .invitations-page .table td {
+    font-size: 0.8rem;
+  }
+
+  .invitations-page .desc-cell {
+    max-width: 120px;
+  }
+
+  .invitations-page .status-select {
+    min-width: 100px;
+    font-size: 0.8rem;
+  }
+}

@@ -100,3 +100,26 @@
   cursor: pointer;
   padding: 0;
 }
+
+/* ── Responsive: mobile ─────────────────────────────────── */
+@media (max-width: 767.98px) {
+  .event-form-page .card {
+    margin: 0 -0.25rem;
+  }
+
+  .event-form-page .card-body {
+    padding: 1rem;
+  }
+
+  .event-form-page .attachment-upload-area {
+    padding: 1rem;
+  }
+
+  .event-form-page .attachment-card {
+    max-width: 100%;
+  }
+
+  .event-form-page .attachment-card .attachment-name {
+    max-width: 140px;
+  }
+}

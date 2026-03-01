@@ -67,3 +67,28 @@
   font-size: 0.75rem;
   letter-spacing: 0.05em;
 }
+
+/* ── Responsive: mobile ─────────────────────────────────── */
+@media (max-width: 767.98px) {
+  .admin-page {
+    padding: 0.75rem;
+    border-radius: 0.35rem;
+  }
+
+  #admin-tabs .nav-link {
+    font-size: 0.78rem;
+    padding: 0.4rem 0.6rem;
+  }
+
+  .admin-page .table th {
+    font-size: 0.7rem;
+  }
+
+  .admin-page .table td {
+    font-size: 0.78rem;
+  }
+
+  .admin-page .desc-cell {
+    max-width: 130px;
+  }
+}

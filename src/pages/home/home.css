@@ -139,3 +139,40 @@
   margin-top: 0.35rem;
   padding-top: 0.5rem;
 }
+
+/* ── Responsive: mobile ─────────────────────────────────── */
+@media (max-width: 767.98px) {
+  .home-page {
+    padding: 0.75rem;
+    border-radius: 0.35rem;
+  }
+
+  #home-fullcalendar {
+    min-height: 380px;
+  }
+
+  .home-page .fc .fc-daygrid-day-frame {
+    min-height: 50px;
+  }
+
+  .home-page .fc .fc-toolbar-title {
+    font-size: 1rem;
+  }
+
+  .home-page .fc .fc-button {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.45rem;
+  }
+
+  .home-page .fc .fc-toolbar {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .home-event-popup {
+    width: calc(100vw - 2rem);
+    max-width: 320px;
+    left: 50% !important;
+    transform: translateX(-50%);
+  }
+}

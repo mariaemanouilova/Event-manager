@@ -3,3 +3,18 @@
   top: 0;
   z-index: 10;
 }
+
+/* ── Responsive: mobile ─────────────────────────────────── */
+@media (max-width: 767.98px) {
+  .app-header .navbar {
+    padding: 0.5rem 0.75rem;
+  }
+
+  .app-header .navbar-brand {
+    font-size: 1rem;
+  }
+
+  .app-header .navbar-collapse {
+    padding: 0.5rem 0;
+  }
+}

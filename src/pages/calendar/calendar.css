@@ -164,3 +164,50 @@
   padding: 0.5rem 1rem 0.75rem;
   border-top: 1px solid #e8eaed;
 }
+
+/* ── Responsive: mobile ─────────────────────────────────── */
+@media (max-width: 767.98px) {
+  .calendar-page {
+    padding: 0.75rem;
+    border-radius: 0.35rem;
+  }
+
+  #fullcalendar {
+    min-height: 380px;
+  }
+
+  .fc .fc-daygrid-day-frame {
+    min-height: 50px;
+  }
+
+  .fc .fc-toolbar-title {
+    font-size: 1rem;
+  }
+
+  .fc .fc-button {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.45rem;
+  }
+
+  .fc .fc-toolbar {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .calendar-filter-chip {
+    font-size: 0.72rem;
+    padding: 0.2rem 0.5rem;
+  }
+
+  .event-popup {
+    width: calc(100vw - 2rem);
+    max-width: 320px;
+    left: 50% !important;
+    transform: translateX(-50%);
+  }
+
+  #create-calendar-btn {
+    font-size: 0.78rem;
+    padding: 0.3rem 0.6rem;
+  }
+}

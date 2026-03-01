@@ -35,3 +35,23 @@
   font-weight: 400;
   font-size: 0.75rem;
 }
+
+/* ── Responsive: mobile ─────────────────────────────────── */
+@media (max-width: 767.98px) {
+  .events-page .table-responsive {
+    margin: 0 -0.75rem;
+    padding: 0 0.75rem;
+  }
+
+  .events-page .table th {
+    font-size: 0.7rem;
+  }
+
+  .events-page .table td {
+    font-size: 0.8rem;
+  }
+
+  .events-page .desc-cell {
+    max-width: 120px;
+  }
+}
