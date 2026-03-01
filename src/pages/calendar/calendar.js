@@ -33,39 +33,60 @@ export async function renderCalendarPage(outlet) {
 
 /* ── Data loading ─────────────────────────────────────────── */
 async function loadEvents(session) {
-  // 1. Load all calendars the user can see (own + public) independently
-  const { data: calendars, error: calErr } = await supabase
-    .from('calendars')
-    .select('id, title, is_public')
-    .order('title');
+  const userId = session?.user?.id;
 
-  if (calErr) {
-    showToast(calErr.message, 'error');
-  }
-
-  // Build calendar meta from the full calendars list (not just from events)
-  calendarMeta = (calendars || []).map((c, i) => ({
-    id: c.id,
-    title: c.title,
-    is_public: c.is_public,
-    color: PALETTE[i % PALETTE.length],
-    active: true,
-  }));
-
-  // 2. Fetch events
-  let query = supabase
+  // 1. Fetch events the user can see (RLS: public + own + invited)
+  const { data: events, error } = await supabase
     .from('events')
     .select('id, title, description, event_date, location, is_public, calendar_id, creator_id, calendars(id, title, is_public)')
     .order('event_date', { ascending: true });
-
-  const { data: events, error } = await query;
 
   if (error) {
     showToast(error.message, 'error');
     return;
   }
 
-  // Map events to FullCalendar format
+  // 2. Fetch calendars the user created (so empty own calendars still appear)
+  const { data: ownCalendars, error: calErr } = await supabase
+    .from('calendars')
+    .select('id, title, is_public')
+    .eq('creator_id', userId)
+    .order('title');
+
+  if (calErr) {
+    showToast(calErr.message, 'error');
+  }
+
+  // 3. Build calendarMeta only from relevant calendars:
+  //    - calendars the user created (own)
+  //    - calendars linked to visible events
+  const calMap = new Map();
+
+  // Add own calendars first
+  (ownCalendars || []).forEach((c) => {
+    calMap.set(c.id, { id: c.id, title: c.title, is_public: c.is_public });
+  });
+
+  // Add calendars referenced by visible events
+  (events || []).forEach((evt) => {
+    if (evt.calendars && !calMap.has(evt.calendar_id)) {
+      calMap.set(evt.calendar_id, {
+        id: evt.calendars.id,
+        title: evt.calendars.title,
+        is_public: evt.calendars.is_public,
+      });
+    }
+  });
+
+  // Sort by title and assign colors
+  const sortedCals = Array.from(calMap.values()).sort((a, b) => a.title.localeCompare(b.title));
+  calendarMeta = sortedCals.map((c, i) => ({
+    ...c,
+    color: PALETTE[i % PALETTE.length],
+    active: true,
+  }));
+
+  // 4. Map events to FullCalendar format
   allEvents = (events || []).map((evt) => {
     const meta = calendarMeta.find((c) => c.id === evt.calendar_id);
     return {
