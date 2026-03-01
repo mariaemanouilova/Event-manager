@@ -223,10 +223,49 @@ function showEventDetail(evt) {
 
       <dt class="col-sm-3">Calendar</dt>
       <dd class="col-sm-9">${esc(calTitle)}</dd>
+
+      <dt class="col-sm-3">Attachments</dt>
+      <dd class="col-sm-9" id="inv-detail-attachments"><span class="text-muted">Loading…</span></dd>
     </dl>
   `;
 
+  // Load attachments for this event
+  loadDetailAttachments(evt.id);
+
   detailModal.show();
+}
+
+async function loadDetailAttachments(eventId) {
+  const container = document.getElementById('inv-detail-attachments');
+  const { data } = await supabase
+    .from('event_attachments')
+    .select('*')
+    .eq('event_id', eventId)
+    .order('created_at');
+
+  if (!data || data.length === 0) {
+    container.innerHTML = '<span class="text-muted">None</span>';
+    return;
+  }
+
+  container.innerHTML = `<div class="attachment-list">${data.map((att) => {
+    const { data: urlData } = supabase.storage.from('event-attachments').getPublicUrl(att.file_path);
+    const url = urlData?.publicUrl || '#';
+    const isImage = att.file_type.startsWith('image/');
+    const icon = isImage
+      ? `<img src="${url}" class="att-thumb" alt="" />`
+      : `<i class="bi ${invAttIcon(att.file_type)}"></i>`;
+    return `<a href="${url}" target="_blank" class="attachment-link" title="${esc(att.file_name)}">${icon}<span class="att-name">${esc(att.file_name)}</span></a>`;
+  }).join('')}</div>`;
+}
+
+function invAttIcon(mime) {
+  if (mime.startsWith('image/')) return 'bi-file-earmark-image';
+  if (mime === 'application/pdf') return 'bi-file-earmark-pdf';
+  if (mime.includes('word') || mime.includes('.document')) return 'bi-file-earmark-word';
+  if (mime.includes('sheet') || mime.includes('excel')) return 'bi-file-earmark-excel';
+  if (mime.includes('presentation') || mime.includes('powerpoint')) return 'bi-file-earmark-ppt';
+  return 'bi-file-earmark';
 }
 
 /* ── Helpers ──────────────────────────────────────────────── */

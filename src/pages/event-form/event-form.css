@@ -25,3 +25,78 @@
 .event-form-page .participant-chip .btn-remove:hover {
   color: #dc3545;
 }
+
+/* ── Attachment upload area ─────────────────────────────── */
+.event-form-page .attachment-upload-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  border: 2px dashed #ced4da;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+.event-form-page .attachment-upload-area:hover,
+.event-form-page .attachment-upload-area.drag-over {
+  border-color: #0d6efd;
+  background-color: #f0f6ff;
+}
+
+.event-form-page .attachment-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.65rem;
+  border-radius: 0.5rem;
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  font-size: 0.82rem;
+  max-width: 260px;
+}
+.event-form-page .attachment-card .attachment-thumb {
+  width: 36px;
+  height: 36px;
+  object-fit: cover;
+  border-radius: 0.35rem;
+  flex-shrink: 0;
+}
+.event-form-page .attachment-card .attachment-icon {
+  font-size: 1.4rem;
+  flex-shrink: 0;
+  color: #6c757d;
+}
+.event-form-page .attachment-card .attachment-info {
+  overflow: hidden;
+}
+.event-form-page .attachment-card .attachment-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  max-width: 160px;
+}
+.event-form-page .attachment-card .attachment-size {
+  font-size: 0.7rem;
+  color: #6c757d;
+}
+.event-form-page .attachment-card .btn-remove-attachment {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: none;
+  background: #dc3545;
+  color: #fff;
+  font-size: 0.65rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+}

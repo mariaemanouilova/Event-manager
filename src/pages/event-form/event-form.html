@@ -65,6 +65,22 @@
             <label for="evt-description" class="form-label">Description</label>
             <textarea class="form-control" id="evt-description" rows="3" placeholder="Event details…"></textarea>
           </div>
+
+          <!-- File Attachments -->
+          <div class="col-12">
+            <label class="form-label">Attachments</label>
+            <div class="attachment-upload-area" id="attachment-drop-zone">
+              <i class="bi bi-cloud-arrow-up fs-3 text-muted"></i>
+              <p class="mb-1 text-muted small">Drag &amp; drop files here or click to browse</p>
+              <p class="mb-0 text-muted" style="font-size:.75rem">Images &amp; documents (max 10 MB each)</p>
+              <input type="file" id="evt-attachments" class="d-none" multiple
+                accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.zip" />
+            </div>
+            <!-- Queued files (new uploads) -->
+            <div id="attachment-preview-list" class="mt-2 d-flex flex-wrap gap-2"></div>
+            <!-- Existing files (edit mode) -->
+            <div id="attachment-existing-list" class="mt-2 d-flex flex-wrap gap-2"></div>
+          </div>
         </div>
 
         <hr />

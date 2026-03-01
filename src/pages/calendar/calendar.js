@@ -310,6 +310,13 @@ function showEventPopup(fcEvent, jsEvent) {
     descRow.classList.add('d-none');
   }
 
+  // Attachments
+  const attRow = document.getElementById('event-popup-attachments-row');
+  const attContainer = document.getElementById('event-popup-attachments');
+  attRow.classList.add('d-none');
+  attContainer.innerHTML = '';
+  loadPopupAttachments(fcEvent.id, attRow, attContainer);
+
   // Footer — show edit/delete only for creator or admin
   const userId = currentSession?.user?.id;
   const canEdit = userId === props.creatorId || isAdmin;
@@ -370,6 +377,37 @@ function positionPopup(popup, jsEvent) {
 
   popup.style.left = `${left}px`;
   popup.style.top = `${top}px`;
+}
+
+/* ── Popup attachments ───────────────────────────────────── */
+async function loadPopupAttachments(eventId, row, container) {
+  const { data } = await supabase
+    .from('event_attachments')
+    .select('*')
+    .eq('event_id', eventId)
+    .order('created_at');
+
+  if (!data || data.length === 0) return;
+
+  container.innerHTML = data.map((att) => {
+    const { data: urlData } = supabase.storage.from('event-attachments').getPublicUrl(att.file_path);
+    const url = urlData?.publicUrl || '#';
+    const isImage = att.file_type.startsWith('image/');
+    const icon = isImage
+      ? `<img src="${url}" class="att-thumb" alt="" />`
+      : `<i class="bi ${popupAttIcon(att.file_type)}"></i>`;
+    return `<a href="${url}" target="_blank" class="attachment-link" title="${escapeHtml(att.file_name)}">${icon}<span class="att-name">${escapeHtml(att.file_name)}</span></a>`;
+  }).join('');
+  row.classList.remove('d-none');
+}
+
+function popupAttIcon(mime) {
+  if (mime.startsWith('image/')) return 'bi-file-earmark-image';
+  if (mime === 'application/pdf') return 'bi-file-earmark-pdf';
+  if (mime.includes('word') || mime.includes('.document')) return 'bi-file-earmark-word';
+  if (mime.includes('sheet') || mime.includes('excel')) return 'bi-file-earmark-excel';
+  if (mime.includes('presentation') || mime.includes('powerpoint')) return 'bi-file-earmark-ppt';
+  return 'bi-file-earmark';
 }
 
 /* ── Delete Event from calendar ───────────────────────────── */

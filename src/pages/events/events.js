@@ -5,6 +5,9 @@ import { supabase } from '../../supabase.js';
 import { showToast } from '../../components/toast/toast.js';
 import { navigateTo } from '../../router/router.js';
 
+// Map of eventId -> attachments array, loaded once
+let attachmentsMap = new Map();
+
 let allEvents = [];      // full dataset
 let filteredEvents = [];  // after filters
 let currentUserId = null;
@@ -19,6 +22,7 @@ export async function renderEventsPage(outlet) {
   currentUserId = session.user.id;
 
   await loadEvents();
+  await loadAllAttachments();
   applyFilters();
   wireFilters();
   wireDeleteModal();
@@ -56,6 +60,7 @@ async function loadEvents() {
   });
 
   allEvents = Array.from(eventMap.values());
+  attachmentsMap.clear();
 
   // Populate calendar filter dropdown
   const calSelect = document.getElementById('filter-calendar');
@@ -137,6 +142,12 @@ function renderTable() {
     // Creator display — show "Me" or fetch email later (for now, use creator_id check)
     const creatorLabel = isOwner ? '<em>Me</em>' : '<span class="text-muted">Other</span>';
 
+    // Attachments
+    const atts = attachmentsMap.get(evt.id) || [];
+    const attHtml = atts.length > 0
+      ? `<div class="attachment-list">${atts.map((a) => renderAttachmentLink(a)).join('')}</div>`
+      : '<span class="text-muted">—</span>';
+
     return `
       <tr>
         <td class="fw-medium">${esc(evt.title)}</td>
@@ -147,6 +158,7 @@ function renderTable() {
         <td>${statusBadge}</td>
         <td>${creatorLabel}</td>
         <td>${calTitle}</td>
+        <td>${attHtml}</td>
         <td class="text-end text-nowrap">
           ${isOwner ? `<a href="/event/${evt.id}/edit" data-link="true" class="btn btn-outline-primary btn-sm me-1" title="Edit">
             <i class="bi bi-pencil-square"></i>
@@ -212,4 +224,41 @@ function esc(str) {
   const d = document.createElement('div');
   d.textContent = str ?? '';
   return d.innerHTML;
+}
+
+/* ── Attachments ──────────────────────────────────────────── */
+async function loadAllAttachments() {
+  const eventIds = allEvents.map((e) => e.id);
+  if (eventIds.length === 0) return;
+
+  const { data, error } = await supabase
+    .from('event_attachments')
+    .select('*')
+    .in('event_id', eventIds)
+    .order('created_at');
+
+  if (error) return;
+  (data || []).forEach((att) => {
+    if (!attachmentsMap.has(att.event_id)) attachmentsMap.set(att.event_id, []);
+    attachmentsMap.get(att.event_id).push(att);
+  });
+}
+
+function renderAttachmentLink(att) {
+  const { data } = supabase.storage.from('event-attachments').getPublicUrl(att.file_path);
+  const url = data?.publicUrl || '#';
+  const isImage = att.file_type.startsWith('image/');
+  const icon = isImage
+    ? `<img src="${url}" class="att-thumb" alt="" />`
+    : `<i class="bi ${attIcon(att.file_type)}"></i>`;
+  return `<a href="${url}" target="_blank" class="attachment-link" title="${esc(att.file_name)}">${icon}<span class="att-name">${esc(att.file_name)}</span></a>`;
+}
+
+function attIcon(mime) {
+  if (mime.startsWith('image/')) return 'bi-file-earmark-image';
+  if (mime === 'application/pdf') return 'bi-file-earmark-pdf';
+  if (mime.includes('word') || mime.includes('.document')) return 'bi-file-earmark-word';
+  if (mime.includes('sheet') || mime.includes('excel')) return 'bi-file-earmark-excel';
+  if (mime.includes('presentation') || mime.includes('powerpoint')) return 'bi-file-earmark-ppt';
+  return 'bi-file-earmark';
 }

@@ -9,6 +9,9 @@ let participantEmails = [];
 let allUsers = [];  // all registered users from DB
 let currentUserId = null;
 let editingEventId = null; // null = add mode
+let pendingFiles = [];          // File objects queued for upload
+let existingAttachments = [];   // rows from event_attachments (edit mode)
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
 
 /* ═══════════════════════════════════════════════════════════
    Public entry points
@@ -24,8 +27,12 @@ export async function renderAddEventPage(outlet) {
   document.getElementById('form-page-title').textContent = 'New Event';
   document.getElementById('evt-submit-label').textContent = 'Create Event';
 
+  pendingFiles = [];
+  existingAttachments = [];
+
   await loadCalendars();
   await loadAllUsers();
+  wireAttachmentUpload();
   wireForm();
 }
 
@@ -40,9 +47,13 @@ export async function renderEditEventPage(outlet, eventId) {
   document.getElementById('form-page-title').textContent = 'Edit Event';
   document.getElementById('evt-submit-label').textContent = 'Save Changes';
 
+  pendingFiles = [];
+  existingAttachments = [];
+
   await loadCalendars();
   await loadAllUsers();
   await loadEventData(eventId);
+  wireAttachmentUpload();
   wireForm();
 }
 
@@ -125,6 +136,168 @@ async function loadEventData(eventId) {
     .map((p) => p.users?.email)
     .filter(Boolean);
   renderParticipantChips();
+
+  // Existing attachments
+  await loadExistingAttachments(eventId);
+}
+
+/* ── Attachment helpers ────────────────────────────────────── */
+async function loadExistingAttachments(eventId) {
+  const { data, error } = await supabase
+    .from('event_attachments')
+    .select('*')
+    .eq('event_id', eventId)
+    .order('created_at');
+
+  if (error) { showToast('Could not load attachments.', 'warning'); return; }
+  existingAttachments = data || [];
+  renderExistingAttachments();
+}
+
+function wireAttachmentUpload() {
+  const dropZone = document.getElementById('attachment-drop-zone');
+  const fileInput = document.getElementById('evt-attachments');
+
+  dropZone.addEventListener('click', () => fileInput.click());
+
+  fileInput.addEventListener('change', () => {
+    addFiles(fileInput.files);
+    fileInput.value = '';  // reset so same file can be re-selected
+  });
+
+  dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+  dropZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropZone.classList.remove('drag-over');
+    addFiles(e.dataTransfer.files);
+  });
+}
+
+function addFiles(fileList) {
+  for (const file of fileList) {
+    if (file.size > MAX_FILE_SIZE) {
+      showToast(`"${file.name}" exceeds 10 MB limit.`, 'warning');
+      continue;
+    }
+    // avoid duplicates by name+size
+    if (pendingFiles.some((f) => f.name === file.name && f.size === file.size)) continue;
+    pendingFiles.push(file);
+  }
+  renderPendingFiles();
+}
+
+function renderPendingFiles() {
+  const container = document.getElementById('attachment-preview-list');
+  container.innerHTML = pendingFiles.map((file, i) => {
+    const isImage = file.type.startsWith('image/');
+    const thumb = isImage
+      ? `<img src="${URL.createObjectURL(file)}" class="attachment-thumb" alt="" />`
+      : `<i class="bi ${fileIcon(file.type)} attachment-icon"></i>`;
+    return `
+      <div class="attachment-card">
+        ${thumb}
+        <div class="attachment-info">
+          <span class="attachment-name" title="${esc(file.name)}">${esc(file.name)}</span>
+          <span class="attachment-size">${formatBytes(file.size)}</span>
+        </div>
+        <button type="button" class="btn-remove-attachment" data-index="${i}" title="Remove">&times;</button>
+      </div>`;
+  }).join('');
+
+  container.querySelectorAll('.btn-remove-attachment').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      pendingFiles.splice(Number(btn.dataset.index), 1);
+      renderPendingFiles();
+    });
+  });
+}
+
+function renderExistingAttachments() {
+  const container = document.getElementById('attachment-existing-list');
+  container.innerHTML = existingAttachments.map((att) => {
+    const isImage = att.file_type.startsWith('image/');
+    const publicUrl = getAttachmentPublicUrl(att.file_path);
+    const thumb = isImage
+      ? `<img src="${publicUrl}" class="attachment-thumb" alt="" />`
+      : `<i class="bi ${fileIcon(att.file_type)} attachment-icon"></i>`;
+    return `
+      <div class="attachment-card">
+        ${thumb}
+        <div class="attachment-info">
+          <a href="${publicUrl}" target="_blank" class="attachment-name" title="${esc(att.file_name)}">${esc(att.file_name)}</a>
+          <span class="attachment-size">${formatBytes(att.file_size)}</span>
+        </div>
+        <button type="button" class="btn-remove-attachment btn-remove-existing" data-id="${att.id}" data-path="${esc(att.file_path)}" title="Remove">&times;</button>
+      </div>`;
+  }).join('');
+
+  container.querySelectorAll('.btn-remove-existing').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const attId = btn.dataset.id;
+      const path = btn.dataset.path;
+      await supabase.storage.from('event-attachments').remove([path]);
+      await supabase.from('event_attachments').delete().eq('id', attId);
+      existingAttachments = existingAttachments.filter((a) => a.id !== attId);
+      renderExistingAttachments();
+      showToast('Attachment removed.', 'info');
+    });
+  });
+}
+
+function getAttachmentPublicUrl(path) {
+  const { data } = supabase.storage.from('event-attachments').getPublicUrl(path);
+  return data?.publicUrl || '';
+}
+
+async function uploadAttachments(eventId) {
+  if (pendingFiles.length === 0) return;
+
+  for (const file of pendingFiles) {
+    const filePath = `${eventId}/${Date.now()}_${file.name}`;
+
+    const { error: uploadErr } = await supabase.storage
+      .from('event-attachments')
+      .upload(filePath, file, { upsert: false });
+
+    if (uploadErr) {
+      showToast(`Upload failed for "${file.name}": ${uploadErr.message}`, 'error');
+      continue;
+    }
+
+    const { error: dbErr } = await supabase
+      .from('event_attachments')
+      .insert({
+        event_id: eventId,
+        file_name: file.name,
+        file_path: filePath,
+        file_type: file.type || 'application/octet-stream',
+        file_size: file.size,
+        uploaded_by: currentUserId,
+      });
+
+    if (dbErr) {
+      showToast(`Could not save record for "${file.name}".`, 'warning');
+    }
+  }
+
+  pendingFiles = [];
+}
+
+function fileIcon(mimeType) {
+  if (mimeType.startsWith('image/')) return 'bi-file-earmark-image';
+  if (mimeType === 'application/pdf') return 'bi-file-earmark-pdf';
+  if (mimeType.includes('word') || mimeType.includes('.document')) return 'bi-file-earmark-word';
+  if (mimeType.includes('sheet') || mimeType.includes('excel')) return 'bi-file-earmark-excel';
+  if (mimeType.includes('presentation') || mimeType.includes('powerpoint')) return 'bi-file-earmark-ppt';
+  if (mimeType.includes('zip') || mimeType.includes('compressed')) return 'bi-file-earmark-zip';
+  return 'bi-file-earmark';
+}
+
+function formatBytes(bytes) {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+  return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
 }
 
 /* ── Participant chips ────────────────────────────────────── */
@@ -205,9 +378,11 @@ function wireForm() {
     try {
       if (editingEventId) {
         await updateEvent(editingEventId, { title, calendarId, eventDate, location, description, isPublic });
+        await uploadAttachments(editingEventId);
         showToast('Event updated.', 'success');
       } else {
-        await createEvent({ title, calendarId, eventDate, location, description, isPublic });
+        const newEventId = await createEvent({ title, calendarId, eventDate, location, description, isPublic });
+        await uploadAttachments(newEventId);
         showToast('Event created.', 'success');
       }
       navigateTo('/event');
@@ -238,6 +413,7 @@ async function createEvent({ title, calendarId, eventDate, location, description
 
   if (error) throw error;
   await syncParticipants(evt.id);
+  return evt.id;
 }
 
 async function updateEvent(eventId, { title, calendarId, eventDate, location, description, isPublic }) {
