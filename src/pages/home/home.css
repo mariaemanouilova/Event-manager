@@ -1,12 +1,141 @@
-.home-page .event-card {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+.home-page {
+  background: #fff;
+  border: 1px solid #dee2e6;
+  border-radius: 0.5rem;
+  padding: 1.25rem;
 }
 
-.home-page .event-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+/* ── FullCalendar overrides (same as calendar page) ───────── */
+#home-fullcalendar {
+  min-height: 600px;
 }
 
-.home-page .event-date {
+.home-page .fc .fc-daygrid-day-frame {
+  min-height: 90px;
+}
+
+.home-page .fc .fc-day-today {
+  background-color: #e8f0fe !important;
+}
+
+.home-page .fc .fc-event {
+  border: none;
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.home-page .fc .fc-daygrid-event-dot {
+  display: none;
+}
+
+.home-page .fc .fc-toolbar-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.home-page .fc .fc-button {
+  text-transform: capitalize;
   font-size: 0.85rem;
+}
+
+.home-page .fc .fc-button-primary {
+  background-color: #4285f4;
+  border-color: #4285f4;
+}
+
+.home-page .fc .fc-button-primary:hover {
+  background-color: #3367d6;
+  border-color: #3367d6;
+}
+
+.home-page .fc .fc-button-primary:not(:disabled).fc-button-active,
+.home-page .fc .fc-button-primary:not(:disabled):active {
+  background-color: #2a56c6;
+  border-color: #2a56c6;
+}
+
+/* ── Filter chips (shared class names with calendar page) ─── */
+.home-page .calendar-filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: 1rem;
+  font-size: 0.8rem;
+  border: 1px solid #dee2e6;
+  cursor: pointer;
+  user-select: none;
+  transition: opacity 0.2s;
+}
+
+.home-page .calendar-filter-chip.inactive {
+  opacity: 0.4;
+}
+
+.home-page .calendar-filter-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+/* ── Event popup (read-only, Google Calendar style) ───────── */
+.home-event-popup-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1040;
+}
+
+.home-event-popup {
+  position: fixed;
+  z-index: 1050;
+  width: 320px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 8px 28px rgba(0,0,0,.25);
+  overflow: hidden;
+  animation: home-popup-in .15s ease-out;
+}
+
+@keyframes home-popup-in {
+  from { opacity: 0; transform: scale(.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.home-event-popup-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.home-event-popup-title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+  margin-right: 0.5rem;
+}
+
+.home-event-popup-body {
+  padding: 0.75rem 1rem;
+}
+
+.home-event-popup-row {
+  display: flex;
+  align-items: flex-start;
+  font-size: 0.85rem;
+  padding: 0.25rem 0;
+  color: #3c4043;
+}
+
+.home-event-popup-desc {
+  border-top: 1px solid #e8eaed;
+  margin-top: 0.35rem;
+  padding-top: 0.5rem;
 }

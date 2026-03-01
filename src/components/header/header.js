@@ -23,7 +23,6 @@ export function createHeader(session) {
       <a class="nav-link" href="/calendar" data-link="true"><i class="bi bi-calendar3 me-1"></i>Calendar</a>
       <a class="nav-link" href="/event" data-link="true"><i class="bi bi-list-ul me-1"></i>My Events</a>
       <a class="nav-link" href="/invitations" data-link="true"><i class="bi bi-envelope-open me-1"></i>Invitations</a>
-      <a class="nav-link" href="/home" data-link="true"><i class="bi bi-globe me-1"></i>Public Events</a>
     `;
 
     // Show Admin link only for admin users
