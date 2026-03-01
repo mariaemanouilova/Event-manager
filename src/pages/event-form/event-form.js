@@ -51,7 +51,6 @@ async function loadCalendars() {
   const { data: calendars, error } = await supabase
     .from('calendars')
     .select('id, title')
-    .eq('creator_id', currentUserId)
     .order('title');
 
   if (error) { showToast(error.message, 'error'); return; }
