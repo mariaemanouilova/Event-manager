@@ -223,8 +223,8 @@ async function markAsRead(notifId) {
 
   if (error) return;
 
-  const notif = notifications.find((n) => n.id === notifId);
-  if (notif) notif.is_read = true;
+  // Remove the notification from the list so it disappears
+  notifications = notifications.filter((n) => n.id !== notifId);
   updateBadge();
   renderDropdown();
 }
@@ -244,7 +244,8 @@ async function markAllRead() {
     return;
   }
 
-  notifications.forEach((n) => { n.is_read = true; });
+  // Remove all now-read notifications so they disappear
+  notifications = notifications.filter((n) => !unreadIds.includes(n.id));
   updateBadge();
   renderDropdown();
 }
