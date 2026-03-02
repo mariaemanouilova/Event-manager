@@ -23,14 +23,19 @@ let isAdmin = false;
 let deleteEventModal = null;
 let pendingDeleteEventId = null;
 let visFilter = { public: true, private: true };
+let renderGeneration = 0;
 
 export async function renderCalendarPage(outlet) {
+  // Increment generation — any previous in-flight render becomes stale
+  const myGen = ++renderGeneration;
+
   outlet.innerHTML = template;
 
   // Reset visibility filter state on every render
   visFilter = { public: true, private: true };
 
   const { data: { session } } = await supabase.auth.getSession();
+  if (myGen !== renderGeneration) return; // stale render, bail out
   currentSession = session;
 
   // Check admin role
@@ -40,10 +45,13 @@ export async function renderCalendarPage(outlet) {
       .select('role')
       .eq('user_id', session.user.id)
       .single();
+    if (myGen !== renderGeneration) return; // stale render, bail out
     isAdmin = roleRow?.role === 'admin';
   }
 
   await loadEvents(session);
+  if (myGen !== renderGeneration) return; // stale render, bail out
+
   buildFilterChips();
   mountFullCalendar();
   wireVisibilityFilter();

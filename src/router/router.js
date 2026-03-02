@@ -107,14 +107,27 @@ export function renderApp() {
   window.addEventListener('popstate', renderRoute);
   document.addEventListener('click', onLinkClick);
 
+  let initialRendered = false;
+
   // Listen for auth state changes (login/logout)
   supabase.auth.onAuthStateChange((event) => {
+    if (event === 'INITIAL_SESSION') {
+      // Render once on first load
+      if (!initialRendered) {
+        initialRendered = true;
+        renderRoute();
+      }
+      return;
+    }
+
     if (event === 'SIGNED_IN') {
-      navigateTo('/calendar');
+      // Only redirect if the user is on a public page (avoid double-render on refresh)
+      const path = normalizePath(window.location.pathname);
+      if (path === '/' || path === '/login' || path === '/home') {
+        navigateTo('/calendar');
+      }
     } else if (event === 'SIGNED_OUT') {
       navigateTo('/');
     }
   });
-
-  renderRoute();
 }
