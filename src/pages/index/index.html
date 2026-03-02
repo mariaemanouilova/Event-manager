@@ -1,45 +1,94 @@
 <div class="landing-page">
-    <div class="px-4 py-5 my-5 text-center">
-        <!-- Hero section -->
-        <h1 class="display-5 fw-bold text-body-emphasis">Your Events, Mastered.</h1>
-        <div class="col-lg-6 mx-auto">
-            <p class="lead mb-4">
-                The Event Manager application helps you organize, plan, and execute events perfectly. 
-                Whether you're organizing a small private party or managing a large public calendar, 
-                you can quickly create events, invite guests, and manage RSVPs smoothly.
+    <!-- ── Hero Section ─────────────────────────────────── -->
+    <section class="hero-section">
+        <div class="hero-overlay"></div>
+        <div class="hero-content text-center">
+            <span class="hero-badge mb-3">
+                <i class="bi bi-stars"></i> #1 Event Management Platform
+            </span>
+            <h1 class="hero-title">Your Events,<br><span class="hero-accent">Mastered.</span></h1>
+            <p class="hero-subtitle mx-auto">
+                Organize, plan, and execute events flawlessly — from intimate gatherings 
+                to large-scale conferences. Create events, invite guests, and track RSVPs 
+                all in one place.
             </p>
-            <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
-                <a href="/login" class="btn btn-primary btn-lg px-4 gap-3 router-link">Get Started</a>
-                <a href="/home" class="btn btn-outline-secondary btn-lg px-4 router-link">Explore Public Events</a>
+            <div class="hero-actions d-flex gap-3 justify-content-center flex-wrap">
+                <a href="/login" class="btn btn-light btn-lg hero-btn-primary router-link">
+                    <i class="bi bi-rocket-takeoff me-2"></i>Get Started Free
+                </a>
+                <a href="/home" class="btn btn-outline-light btn-lg hero-btn-secondary router-link">
+                    <i class="bi bi-globe me-2"></i>Explore Public Events
+                </a>
+            </div>
+            <div class="hero-stats d-flex justify-content-center gap-4 mt-4">
+                <div class="hero-stat">
+                    <span class="hero-stat-number">500+</span>
+                    <span class="hero-stat-label">Events Created</span>
+                </div>
+                <div class="hero-stat-divider"></div>
+                <div class="hero-stat">
+                    <span class="hero-stat-number">2K+</span>
+                    <span class="hero-stat-label">Happy Users</span>
+                </div>
+                <div class="hero-stat-divider"></div>
+                <div class="hero-stat">
+                    <span class="hero-stat-number">99%</span>
+                    <span class="hero-stat-label">Satisfaction</span>
+                </div>
             </div>
         </div>
-    </div>
-    
-    <!-- Features section -->
+        <div class="hero-wave">
+            <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
+                <path d="M0,64 C360,120 720,0 1080,64 C1260,96 1380,80 1440,64 L1440,120 L0,120 Z" fill="#f8f9fa"/>
+            </svg>
+        </div>
+    </section>
+
+    <!-- ── Features Section ─────────────────────────────── -->
     <div class="container px-4 py-5 pb-5" id="featured-3">
-        <h2 class="pb-2 border-bottom">Why use Event Manager?</h2>
+        <div class="text-center mb-5">
+            <h2 class="fw-bold">Why Choose Event Manager?</h2>
+            <p class="text-muted mx-auto" style="max-width: 600px;">Everything you need to create memorable events, streamline planning, and delight your guests.</p>
+        </div>
         <div class="row g-4 py-3 row-cols-1 row-cols-lg-3">
             <div class="feature col text-center">
-                <div class="feature-icon d-inline-flex bg-primary bg-gradient fs-2 mb-3 px-3 py-2 rounded-3 text-white">
-                    <i class="bi bi-calendar-check"></i>
+                <div class="feature-icon-wrapper mb-3">
+                    <div class="feature-icon d-inline-flex bg-primary bg-gradient fs-2 px-3 py-2 rounded-3 text-white">
+                        <i class="bi bi-calendar-check"></i>
+                    </div>
                 </div>
-                <h3 class="fs-4 text-body-emphasis">Beautiful Calendars</h3>
-                <p>Create personal or public calendars. Group related events seamlessly.</p>
+                <h3 class="fs-4 fw-semibold text-body-emphasis">Beautiful Calendars</h3>
+                <p class="text-muted">Create personal or public calendars. Group related events and view everything at a glance.</p>
             </div>
             <div class="feature col text-center">
-                <div class="feature-icon d-inline-flex bg-primary bg-gradient fs-2 mb-3 px-3 py-2 rounded-3 text-white">
-                    <i class="bi bi-envelope-paper"></i>
+                <div class="feature-icon-wrapper mb-3">
+                    <div class="feature-icon d-inline-flex bg-primary bg-gradient fs-2 px-3 py-2 rounded-3 text-white">
+                        <i class="bi bi-envelope-paper"></i>
+                    </div>
                 </div>
-                <h3 class="fs-4 text-body-emphasis">Smart Invitations</h3>
-                <p>Easily invite guests as participants and collect their RSVP statuses dynamically.</p>
+                <h3 class="fs-4 fw-semibold text-body-emphasis">Smart Invitations</h3>
+                <p class="text-muted">Invite guests effortlessly and collect RSVP statuses in real-time with automated notifications.</p>
             </div>
             <div class="feature col text-center">
-                <div class="feature-icon d-inline-flex bg-primary bg-gradient fs-2 mb-3 px-3 py-2 rounded-3 text-white">
-                    <i class="bi bi-shield-lock"></i>
+                <div class="feature-icon-wrapper mb-3">
+                    <div class="feature-icon d-inline-flex bg-primary bg-gradient fs-2 px-3 py-2 rounded-3 text-white">
+                        <i class="bi bi-shield-lock"></i>
+                    </div>
                 </div>
-                <h3 class="fs-4 text-body-emphasis">Secure Control</h3>
-                <p>Built with robust security boundaries. Only people you choose will see private events.</p>
+                <h3 class="fs-4 fw-semibold text-body-emphasis">Secure & Private</h3>
+                <p class="text-muted">Built with robust security. Only people you choose will see your private events and data.</p>
             </div>
         </div>
     </div>
+
+    <!-- ── CTA Section ──────────────────────────────────── -->
+    <section class="cta-section text-center py-5">
+        <div class="container">
+            <h2 class="fw-bold mb-3">Ready to Plan Your Next Event?</h2>
+            <p class="text-muted mb-4">Join thousands of organizers who trust Event Manager for their events.</p>
+            <a href="/login" class="btn btn-primary btn-lg px-5 router-link">
+                <i class="bi bi-arrow-right-circle me-2"></i>Start Now
+            </a>
+        </div>
+    </section>
 </div>
