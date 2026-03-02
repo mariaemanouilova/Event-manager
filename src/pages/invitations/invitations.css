@@ -1,14 +1,4 @@
-.invitations-page .table th {
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-  white-space: nowrap;
-}
-
-.invitations-page .table td {
-  font-size: 0.88rem;
-  vertical-align: middle;
-}
+/* Invitations page uses shared .page-card, .page-topbar, .page-table from app.css */
 
 .invitations-page .desc-cell {
   max-width: 180px;
@@ -34,14 +24,6 @@
   .invitations-page .table-responsive {
     margin: 0 -0.75rem;
     padding: 0 0.75rem;
-  }
-
-  .invitations-page .table th {
-    font-size: 0.7rem;
-  }
-
-  .invitations-page .table td {
-    font-size: 0.8rem;
   }
 
   .invitations-page .desc-cell {

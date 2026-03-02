@@ -1,19 +1,78 @@
 <section class="calendar-page">
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h1 class="h3 mb-0"><i class="bi bi-calendar3 me-2"></i>My Calendar</h1>
-    <button class="btn btn-primary btn-sm" id="create-calendar-btn" type="button">
-      <i class="bi bi-plus-lg me-1"></i>Create Calendar
-    </button>
+  <!-- ── Top bar ─────────────────────────── -->
+  <div class="cal-topbar">
+    <div class="cal-topbar-left">
+      <h1 class="cal-month-title" id="cal-month-title">
+        <i class="bi bi-calendar3 me-2"></i>My Calendar
+      </h1>
+    </div>
+    <div class="cal-topbar-right">
+      <button class="btn btn-primary btn-sm cal-create-btn" id="create-calendar-btn" type="button">
+        <i class="bi bi-plus-lg me-1"></i>New Calendar
+      </button>
+    </div>
   </div>
 
-  <!-- Calendar filter -->
-  <div class="mb-3 d-flex flex-wrap gap-2 align-items-center" id="calendar-filters">
-    <span class="text-muted small me-1">Filter:</span>
-    <!-- dynamically populated -->
-  </div>
+  <!-- ── Main content: Calendar + Sidebar ── -->
+  <div class="cal-layout">
+    <!-- Calendar grid -->
+    <div class="cal-grid-area">
+      <div id="fullcalendar"></div>
+    </div>
 
-  <!-- FullCalendar mount point -->
-  <div id="fullcalendar"></div>
+    <!-- Sidebar -->
+    <aside class="cal-sidebar">
+      <!-- Calendars Legend -->
+      <div class="cal-sidebar-section">
+        <h6 class="cal-sidebar-heading"><i class="bi bi-palette me-2"></i>Calendars</h6>
+        <div class="cal-legend-list" id="calendar-filters">
+          <!-- dynamically populated -->
+        </div>
+      </div>
+
+      <!-- Visibility Types -->
+      <div class="cal-sidebar-section">
+        <h6 class="cal-sidebar-heading"><i class="bi bi-eye me-2"></i>Visibility</h6>
+        <div class="cal-visibility-badges">
+          <span class="cal-vis-badge cal-vis-public" id="cal-vis-public-btn" role="button" tabindex="0">
+            <i class="bi bi-globe2 me-1"></i>Public
+            <span class="cal-vis-count" id="cal-vis-public-count">0</span>
+          </span>
+          <span class="cal-vis-badge cal-vis-private" id="cal-vis-private-btn" role="button" tabindex="0">
+            <i class="bi bi-lock me-1"></i>Private
+            <span class="cal-vis-count" id="cal-vis-private-count">0</span>
+          </span>
+        </div>
+      </div>
+
+      <!-- Upcoming Events -->
+      <div class="cal-sidebar-section">
+        <h6 class="cal-sidebar-heading"><i class="bi bi-clock-history me-2"></i>Upcoming Events</h6>
+        <div class="cal-upcoming-list" id="cal-upcoming-list">
+          <p class="text-muted small mb-0">No upcoming events</p>
+        </div>
+      </div>
+
+      <!-- Quick Stats -->
+      <div class="cal-sidebar-section">
+        <h6 class="cal-sidebar-heading"><i class="bi bi-bar-chart me-2"></i>Overview</h6>
+        <div class="cal-stats">
+          <div class="cal-stat-item">
+            <span class="cal-stat-value" id="cal-stat-total">0</span>
+            <span class="cal-stat-label">Total Events</span>
+          </div>
+          <div class="cal-stat-item">
+            <span class="cal-stat-value" id="cal-stat-calendars">0</span>
+            <span class="cal-stat-label">Calendars</span>
+          </div>
+          <div class="cal-stat-item">
+            <span class="cal-stat-value" id="cal-stat-upcoming">0</span>
+            <span class="cal-stat-label">Upcoming</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
 </section>
 
 <!-- Event Detail Popup (Google Calendar style) -->

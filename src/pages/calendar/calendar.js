@@ -22,6 +22,7 @@ let createCalModal = null;
 let isAdmin = false;
 let deleteEventModal = null;
 let pendingDeleteEventId = null;
+let visFilter = { public: true, private: true };
 
 export async function renderCalendarPage(outlet) {
   outlet.innerHTML = template;
@@ -42,6 +43,7 @@ export async function renderCalendarPage(outlet) {
   await loadEvents(session);
   buildFilterChips();
   mountFullCalendar();
+  wireVisibilityFilter();
   wireCreateCalendarModal(session);
   wireEventPopup();
   wireDeleteEventModal();
@@ -119,33 +121,51 @@ async function loadEvents(session) {
       },
       backgroundColor: meta?.color || PALETTE[0],
       borderColor: meta?.color || PALETTE[0],
+      classNames: [evt.is_public ? 'evt-public' : 'evt-private'],
     };
   });
 }
 
-/* ── Filter chips ─────────────────────────────────────────── */
+/* ── Filter chips (sidebar legend) ─────────────────────────── */
 function buildFilterChips() {
   const container = document.getElementById('calendar-filters');
   if (!container) return;
 
-  container.innerHTML = '<span class="text-muted small me-1">Filter:</span>';
+  container.innerHTML = '';
 
   calendarMeta.forEach((cal) => {
-    const chip = document.createElement('span');
-    chip.className = `calendar-filter-chip${cal.active ? '' : ' inactive'}`;
-    chip.innerHTML = `<span class="calendar-filter-dot" style="background:${cal.color}"></span>${escapeHtml(cal.title)}`;
-    chip.addEventListener('click', () => {
+    // Count events for this calendar
+    const count = allEvents.filter((e) => e.extendedProps.calendarId === cal.id).length;
+
+    const item = document.createElement('div');
+    item.className = `cal-legend-item${cal.active ? '' : ' inactive'}`;
+    item.innerHTML = `
+      <span class="cal-legend-bar" style="background:${cal.color}"></span>
+      <span class="cal-legend-dot" style="background:${cal.color}"></span>
+      <span class="cal-legend-text">${escapeHtml(cal.title)}</span>
+      <span class="cal-legend-count">${count}</span>
+    `;
+    item.addEventListener('click', () => {
       cal.active = !cal.active;
-      chip.classList.toggle('inactive', !cal.active);
+      item.classList.toggle('inactive', !cal.active);
       updateCalendarEvents();
     });
-    container.appendChild(chip);
+    container.appendChild(item);
   });
+
+  // Also populate sidebar stats & upcoming
+  populateSidebarStats();
+  populateUpcomingEvents();
 }
 
 function getVisibleEvents() {
   const activeCalIds = new Set(calendarMeta.filter((c) => c.active).map((c) => c.id));
-  return allEvents.filter((e) => activeCalIds.has(e.extendedProps.calendarId));
+  return allEvents.filter((e) => {
+    if (!activeCalIds.has(e.extendedProps.calendarId)) return false;
+    if (!visFilter.public && e.extendedProps.isPublic) return false;
+    if (!visFilter.private && !e.extendedProps.isPublic) return false;
+    return true;
+  });
 }
 
 function updateCalendarEvents() {
@@ -186,6 +206,83 @@ function escapeHtml(str) {
   const div = document.createElement('div');
   div.textContent = str || '';
   return div.innerHTML;
+}
+
+/* ── Sidebar: Upcoming Events ─────────────────────────────── */
+function populateUpcomingEvents() {
+  const container = document.getElementById('cal-upcoming-list');
+  if (!container) return;
+
+  const now = new Date();
+  const upcoming = allEvents
+    .filter((e) => new Date(e.start) >= now)
+    .sort((a, b) => new Date(a.start) - new Date(b.start))
+    .slice(0, 5);
+
+  if (upcoming.length === 0) {
+    container.innerHTML = '<p class="text-muted small mb-0">No upcoming events</p>';
+    return;
+  }
+
+  container.innerHTML = upcoming.map((evt) => {
+    const meta = calendarMeta.find((c) => c.id === evt.extendedProps.calendarId);
+    const color = meta?.color || PALETTE[0];
+    const date = new Date(evt.start);
+    const dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+    return `
+      <div class="cal-upcoming-item">
+        <div class="cal-upcoming-color" style="background:${color}"></div>
+        <div class="cal-upcoming-info">
+          <div class="cal-upcoming-title">${escapeHtml(evt.title)}</div>
+          <div class="cal-upcoming-date">${dateStr}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+/* ── Sidebar: Stats ───────────────────────────────────────── */
+function populateSidebarStats() {
+  const totalEl = document.getElementById('cal-stat-total');
+  const calsEl = document.getElementById('cal-stat-calendars');
+  const upcomingEl = document.getElementById('cal-stat-upcoming');
+
+  if (totalEl) totalEl.textContent = allEvents.length;
+  if (calsEl) calsEl.textContent = calendarMeta.length;
+
+  const now = new Date();
+  const upcomingCount = allEvents.filter((e) => new Date(e.start) >= now).length;
+  if (upcomingEl) upcomingEl.textContent = upcomingCount;
+
+  // Visibility counts
+  const pubCount = allEvents.filter((e) => e.extendedProps.isPublic).length;
+  const privCount = allEvents.filter((e) => !e.extendedProps.isPublic).length;
+  const pubCountEl = document.getElementById('cal-vis-public-count');
+  const privCountEl = document.getElementById('cal-vis-private-count');
+  if (pubCountEl) pubCountEl.textContent = pubCount;
+  if (privCountEl) privCountEl.textContent = privCount;
+}
+
+/* ── Visibility filter ────────────────────────────────────── */
+function wireVisibilityFilter() {
+  const pubBtn = document.getElementById('cal-vis-public-btn');
+  const privBtn = document.getElementById('cal-vis-private-btn');
+
+  if (pubBtn) {
+    pubBtn.addEventListener('click', () => {
+      visFilter.public = !visFilter.public;
+      pubBtn.classList.toggle('inactive', !visFilter.public);
+      updateCalendarEvents();
+    });
+  }
+
+  if (privBtn) {
+    privBtn.addEventListener('click', () => {
+      visFilter.private = !visFilter.private;
+      privBtn.classList.toggle('inactive', !visFilter.private);
+      updateCalendarEvents();
+    });
+  }
 }
 
 /* ══════════════════════════════════════════════════════════

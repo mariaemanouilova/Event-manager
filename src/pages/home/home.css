@@ -260,11 +260,6 @@
     font-size: 0.8rem;
   }
 
-  .home-page {
-    padding: 0.75rem;
-    border-radius: 0.35rem;
-  }
-
   #home-fullcalendar {
     min-height: 380px;
   }

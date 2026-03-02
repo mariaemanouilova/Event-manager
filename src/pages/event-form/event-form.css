@@ -1,4 +1,6 @@
-.event-form-page .card {
+/* Event Form uses shared .page-topbar, .page-form-card from app.css */
+
+.event-form-page .page-form-card {
   max-width: 800px;
 }
 

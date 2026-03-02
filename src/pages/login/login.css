@@ -2,10 +2,104 @@
   min-height: 60vh;
 }
 
-.login-page .card {
+.login-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
   border-radius: 0.75rem;
+  padding: 2rem;
+  max-width: 440px;
+  width: 100%;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
 }
 
-.login-page .nav-tabs .nav-link {
-  font-weight: 500;
+.login-card-header {
+  margin-bottom: 1.5rem;
+}
+
+.login-icon-circle {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4285f4, #2a56c6);
+  color: #fff;
+  font-size: 1.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.75rem;
+  box-shadow: 0 4px 12px rgba(66, 133, 244, 0.3);
+}
+
+.login-heading {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #1a1a2e;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.25rem;
+}
+
+.login-subheading {
+  font-size: 0.88rem;
+  color: #888;
+  margin: 0;
+}
+
+.login-card .nav-tabs {
+  border-bottom: 2px solid #f1f3f5;
+}
+
+.login-card .nav-tabs .nav-link {
+  font-weight: 600;
+  font-size: 0.88rem;
+  color: #555;
+  border: none;
+  padding: 0.6rem 1rem;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.login-card .nav-tabs .nav-link.active {
+  color: #4285f4;
+  border-bottom-color: #4285f4;
+  background: transparent;
+}
+
+.login-card .nav-tabs .nav-link:hover:not(.active) {
+  color: #333;
+  border-bottom-color: #ccc;
+}
+
+.login-card .btn-primary {
+  border-radius: 50px;
+  font-weight: 600;
+  padding: 0.55rem 1rem;
+  box-shadow: 0 2px 8px rgba(66, 133, 244, 0.25);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.login-card .btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(66, 133, 244, 0.35);
+}
+
+.login-card .form-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.login-card .form-control {
+  border-radius: 0.5rem;
+  border: 1px solid #e5e7eb;
+  font-size: 0.9rem;
+  padding: 0.6rem 0.8rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.login-card .form-control:focus {
+  border-color: #4285f4;
+  box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.15);
 }

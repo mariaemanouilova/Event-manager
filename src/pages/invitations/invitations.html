@@ -1,12 +1,13 @@
 <section class="invitations-page">
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h1 class="h3 mb-0"><i class="bi bi-envelope-open me-2"></i>My Invitations</h1>
-    <span class="badge bg-secondary" id="inv-count">0 invitations</span>
+  <!-- Top bar -->
+  <div class="page-topbar">
+    <h1 class="page-title"><i class="bi bi-envelope-open me-2"></i>My Invitations</h1>
+    <span class="page-count-badge" id="inv-count">0 invitations</span>
   </div>
 
   <!-- Sort control -->
   <div class="mb-3">
-    <button class="btn btn-outline-secondary btn-sm" id="sort-date-btn">
+    <button class="btn btn-outline-secondary btn-sm page-sort-btn" id="sort-date-btn">
       <i class="bi bi-sort-down" id="sort-icon"></i> Date
     </button>
   </div>
@@ -26,8 +27,8 @@
 
   <!-- Table -->
   <div class="table-responsive d-none" id="inv-table-wrapper">
-    <table class="table table-hover align-middle mb-0">
-      <thead class="table-light">
+    <table class="table table-hover align-middle mb-0 page-table">
+      <thead>
         <tr>
           <th>Title</th>
           <th>Description</th>

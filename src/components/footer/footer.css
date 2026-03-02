@@ -1,3 +1,10 @@
 .app-footer {
   margin-top: auto;
+  border-top: 1px solid var(--color-border, #e5e7eb);
+  background: #fff;
+}
+
+.app-footer .container {
+  font-size: 0.82rem;
+  color: #888;
 }
