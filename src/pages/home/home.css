@@ -1,3 +1,90 @@
+/* ── Hero Bar ────────────────────────────────────────────── */
+.home-hero {
+  position: relative;
+  min-height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 0.75rem;
+  margin-bottom: 1.5rem;
+  background:
+    url('https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=1600&q=80')
+    center / cover no-repeat;
+}
+
+.home-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(13, 71, 161, 0.82) 0%, rgba(30, 136, 229, 0.72) 50%, rgba(66, 133, 244, 0.65) 100%);
+  z-index: 1;
+}
+
+.home-hero-content {
+  position: relative;
+  z-index: 2;
+  padding: 3rem 1.5rem;
+  max-width: 720px;
+}
+
+.home-hero-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 0.75rem;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+  letter-spacing: -0.02em;
+}
+
+.home-hero-subtitle {
+  font-size: 1.15rem;
+  color: rgba(255, 255, 255, 0.92);
+  margin-bottom: 1.75rem;
+  line-height: 1.65;
+}
+
+.home-hero-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+
+.home-hero-btn {
+  font-weight: 600;
+  border-radius: 2rem;
+  padding: 0.6rem 1.75rem;
+  font-size: 1rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.home-hero-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+.home-hero-stats {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.home-hero-stat {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.home-hero-stat i {
+  font-size: 1.15rem;
+}
+
+/* ── Home page card ──────────────────────────────────────── */
 .home-page {
   background: #fff;
   border: 1px solid #dee2e6;
@@ -142,6 +229,37 @@
 
 /* ── Responsive: mobile ─────────────────────────────────── */
 @media (max-width: 767.98px) {
+  .home-hero {
+    min-height: 320px;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .home-hero-content {
+    padding: 2rem 1rem;
+  }
+
+  .home-hero-title {
+    font-size: 1.65rem;
+  }
+
+  .home-hero-subtitle {
+    font-size: 0.98rem;
+  }
+
+  .home-hero-btn {
+    font-size: 0.9rem;
+    padding: 0.5rem 1.3rem;
+  }
+
+  .home-hero-stats {
+    gap: 1rem;
+  }
+
+  .home-hero-stat {
+    font-size: 0.8rem;
+  }
+
   .home-page {
     padding: 0.75rem;
     border-radius: 0.35rem;
