@@ -189,6 +189,13 @@ function editEvent(e) {
 
     if (!title || !event_date) throw new Error('Title and date are required.');
 
+    // Event visibility must match calendar visibility
+    if (e.calendars && e.calendars.is_public !== is_public) {
+      const calType = e.calendars.is_public ? 'public' : 'private';
+      const evtType = is_public ? 'public' : 'private';
+      throw new Error(`A ${evtType} event cannot be saved in a ${calType} calendar. Event visibility must match the calendar.`);
+    }
+
     const { error: err } = await data.updateEvent(e.id, {
       title,
       description: description || null,

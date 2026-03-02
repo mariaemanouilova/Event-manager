@@ -7,6 +7,7 @@ import { insertNotification } from '../../components/notifications/notifications
 
 let participantEmails = [];
 let allUsers = [];  // all registered users from DB
+let allCalendars = [];  // calendars with is_public flag
 let currentUserId = null;
 let editingEventId = null; // null = add mode
 let pendingFiles = [];          // File objects queued for upload
@@ -61,13 +62,14 @@ export async function renderEditEventPage(outlet, eventId) {
 async function loadCalendars() {
   const { data: calendars, error } = await supabase
     .from('calendars')
-    .select('id, title')
+    .select('id, title, is_public')
     .order('title');
 
   if (error) { showToast(error.message, 'error'); return; }
 
+  allCalendars = calendars || [];
   const sel = document.getElementById('evt-calendar');
-  (calendars || []).forEach((c) => {
+  allCalendars.forEach((c) => {
     const opt = document.createElement('option');
     opt.value = c.id;
     opt.textContent = c.title;
@@ -378,6 +380,15 @@ function wireForm() {
 
     if (!title || !calendarId || !eventDate) {
       showToast('Please fill in required fields.', 'error');
+      return;
+    }
+
+    // Event visibility must match calendar visibility
+    const selectedCal = allCalendars.find((c) => c.id === calendarId);
+    if (selectedCal && selectedCal.is_public !== isPublic) {
+      const calType = selectedCal.is_public ? 'public' : 'private';
+      const evtType = isPublic ? 'public' : 'private';
+      showToast(`A ${evtType} event cannot be placed in a ${calType} calendar. Event visibility must match the calendar.`, 'error');
       return;
     }
 

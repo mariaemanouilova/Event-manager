@@ -63,7 +63,7 @@ export async function deleteCalendar(id) {
 export async function fetchEvents() {
   return supabase
     .from('events')
-    .select('id, title, description, event_date, location, is_public, creator_id, calendar_id, created_at, users!events_creator_id_fkey(email, full_name), calendars(title)')
+    .select('id, title, description, event_date, location, is_public, creator_id, calendar_id, created_at, users!events_creator_id_fkey(email, full_name), calendars(title, is_public)')
     .order('event_date', { ascending: false });
 }
 
