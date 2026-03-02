@@ -27,6 +27,9 @@ let visFilter = { public: true, private: true };
 export async function renderCalendarPage(outlet) {
   outlet.innerHTML = template;
 
+  // Reset visibility filter state on every render
+  visFilter = { public: true, private: true };
+
   const { data: { session } } = await supabase.auth.getSession();
   currentSession = session;
 
@@ -170,8 +173,7 @@ function getVisibleEvents() {
 
 function updateCalendarEvents() {
   if (!calendarInstance) return;
-  calendarInstance.removeAllEvents();
-  getVisibleEvents().forEach((e) => calendarInstance.addEvent(e));
+  calendarInstance.refetchEvents();
 }
 
 /* ── FullCalendar ─────────────────────────────────────────── */
@@ -187,7 +189,9 @@ function mountFullCalendar() {
       center: 'title',
       right: 'dayGridMonth,dayGridWeek',
     },
-    events: getVisibleEvents(),
+    events: function(_fetchInfo, successCallback) {
+      successCallback(getVisibleEvents());
+    },
     height: 'auto',
     dayMaxEvents: 3,
     eventDisplay: 'block',
@@ -360,10 +364,7 @@ function wireCreateCalendarModal(session) {
 async function refreshCalendarView() {
   await loadEvents(currentSession);
   buildFilterChips();
-  if (calendarInstance) {
-    calendarInstance.removeAllEvents();
-    getVisibleEvents().forEach((e) => calendarInstance.addEvent(e));
-  }
+  updateCalendarEvents();
 }
 
 /* ══════════════════════════════════════════════════════════

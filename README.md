@@ -23,7 +23,7 @@ A full-stack web application for creating and managing events, calendars, and in
 **Highlights:**
 
 - Interactive calendar views powered by **FullCalendar** (month / week)
-- Color-coded calendar filter chips
+- Color-coded calendar filter chips + Public/Private visibility toggle badges
 - Drag-and-drop file attachments stored in **Supabase Storage**
 - Real-time notification system via **Supabase Realtime** (bell icon + toast popups)
 - Participant invitation with chip-based user selection and inline RSVP management
@@ -319,7 +319,7 @@ Event-manager/
 │   │   │   └── login.css
 │   │   ├── calendar/                   # Authenticated calendar view
 │   │   │   ├── calendar.html
-│   │   │   ├── calendar.js             # FullCalendar with filter chips + CRUD
+│   │   │   ├── calendar.js             # FullCalendar with filter chips, visibility filter + CRUD
 │   │   │   └── calendar.css
 │   │   ├── events/                     # My Events dashboard
 │   │   │   ├── events.html
