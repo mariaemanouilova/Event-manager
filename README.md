@@ -252,6 +252,7 @@ Alternatively, execute each SQL file from `supabase/migrations/` manually in the
 8. `20260301200000_allow_all_users_view_all_calendars.sql` — Calendar visibility
 9. `20260301300000_public_events_function.sql` — Public events RPC function
 10. `20260301400000_event_attachments_table_and_storage.sql` — Attachments table + storage bucket
+11. `20260302000000_block_private_events_in_public_calendars.sql` — Prevent private events in public calendars
 
 ### 5. Start the Dev Server
 
@@ -362,7 +363,8 @@ Event-manager/
 │       ├── 20260301100000_fix_circular_rls_with_security_definer.sql
 │       ├── 20260301200000_allow_all_users_view_all_calendars.sql
 │       ├── 20260301300000_public_events_function.sql
-│       └── 20260301400000_event_attachments_table_and_storage.sql
+│       ├── 20260301400000_event_attachments_table_and_storage.sql
+│       └── 20260302000000_block_private_events_in_public_calendars.sql
 │
 └── .github/
     └── copilot-instructions.md         # AI assistant project guidelines
